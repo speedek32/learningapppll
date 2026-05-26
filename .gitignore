@@ -1,2 +1,5 @@
 node_modules/
 .env
+passplus.db
+passplus.db-shm
+passplus.db-wal

@@ -333,6 +333,7 @@ const Tests = (() => {
     };
 
     Storage.saveResult(result);
+    Auth.syncResult(result);   // sync to server when logged in
     showResult(result, timeUp);
     App.updateDashboard();
   }
@@ -469,5 +470,7 @@ const Tests = (() => {
     App.updateDashboard();
   });
 
-  return { showMenu };
+  function getCategories() { return CATEGORIES; }
+
+  return { showMenu, getCategories };
 })();

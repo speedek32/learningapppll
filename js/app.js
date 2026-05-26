@@ -6,8 +6,10 @@ const App = (() => {
     setupTheme();
     setupModals();
     setupPremium();
+    setupAuth();
     setupNotifications();
     Gamification.init();
+    Auth.init();
     goto('dashboard');
     loadSettings();
     updateDashboard();
@@ -86,22 +88,77 @@ const App = (() => {
   }
 
   function setupPremium() {
-    // Activate premium (demo – no real payment)
     document.getElementById('btnActivatePremium').addEventListener('click', () => {
-      Gamification.setAdFree();
-      document.getElementById('btnUpgrade').style.display = 'none';
-      closeModal('premiumModal');
-      alert('⭐ Pass+ Premium aktywowane! Reklamy zostały usunięte. Dziękujemy za wsparcie!');
+      Auth.buyPremium();
     });
 
     document.getElementById('adClose').addEventListener('click', () => {
       document.getElementById('adBanner').style.display = 'none';
     });
 
-    // Hide upgrade button if already premium
-    if (Gamification.isAdFree()) {
-      document.getElementById('btnUpgrade').style.display = 'none';
-    }
+    if (Gamification.isAdFree()) hidePremiumUI();
+  }
+
+  function hidePremiumUI() {
+    document.getElementById('btnUpgrade').style.display = 'none';
+  }
+
+  function setupAuth() {
+    const tabLogin    = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+    const formLogin   = document.getElementById('formLogin');
+    const formReg     = document.getElementById('formRegister');
+
+    tabLogin.addEventListener('click', () => {
+      tabLogin.classList.add('active'); tabRegister.classList.remove('active');
+      formLogin.style.display = ''; formReg.style.display = 'none';
+    });
+    tabRegister.addEventListener('click', () => {
+      tabRegister.classList.add('active'); tabLogin.classList.remove('active');
+      formLogin.style.display = 'none'; formReg.style.display = '';
+    });
+
+    document.getElementById('btnLogin').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass  = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      errEl.style.display = 'none';
+      try {
+        await Auth.login(email, pass);
+        closeModal('authModal');
+        // Show hint if there was one
+        document.getElementById('authHint').style.display = 'none';
+        updateDashboard();
+      } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+      }
+    });
+
+    document.getElementById('btnRegister').addEventListener('click', async () => {
+      const username = document.getElementById('regUsername').value.trim();
+      const email    = document.getElementById('regEmail').value.trim();
+      const pass     = document.getElementById('regPassword').value;
+      const errEl    = document.getElementById('regError');
+      errEl.style.display = 'none';
+      try {
+        await Auth.register(username, email, pass);
+        closeModal('authModal');
+        document.getElementById('authHint').style.display = 'none';
+        updateDashboard();
+      } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+      }
+    });
+
+    // Enter key in password fields
+    document.getElementById('loginPassword').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('btnLogin').click();
+    });
+    document.getElementById('regPassword').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('btnRegister').click();
+    });
   }
 
   function setupNotifications() {
@@ -185,6 +242,10 @@ const App = (() => {
       </div>
       <div class="progress-bar-wrap"><div class="progress-bar" style="width:${gpct}%;background:${glevel.color}"></div></div>`;
 
+    // Leaderboard
+    const lbContainer = document.getElementById('leaderboardContainer');
+    if (lbContainer) Auth.loadLeaderboard(lbContainer);
+
     const topicsEl = document.getElementById('topicsPreview');
     const unstudierd = topics.filter(t => !t.studied).slice(0, 5);
     if (unstudierd.length) {
@@ -261,7 +322,7 @@ const App = (() => {
     }
   });
 
-  return { init, goto, openModal, closeModal, updateDashboard };
+  return { init, goto, openModal, closeModal, updateDashboard, hidePremiumUI };
 })();
 
 document.addEventListener('DOMContentLoaded', () => App.init());

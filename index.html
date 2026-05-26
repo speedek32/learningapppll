@@ -35,6 +35,7 @@
     </a>
   </nav>
   <div class="sidebar-footer">
+    <div id="sidebarUser"></div>
     <div id="sidebarXP"></div>
     <button class="btn-upgrade" id="btnUpgrade" onclick="App.openModal('premiumModal')">⭐ Pass+ Premium</button>
     <button class="btn-theme" id="themeToggle">🌙 Ciemny tryb</button>
@@ -108,10 +109,14 @@
         <h2>🔥 Twoje postępy</h2>
         <div id="dashGamification"><p class="empty-msg">Ładowanie...</p></div>
       </div>
-      <div class="card" style="opacity:0.75;">
-        <h2>⚔️ 1v1 ze znajomym <span class="coming-soon-badge">Wkrótce</span></h2>
-        <p class="hint">Wyślij znajomemu wyzwanie – kto dostanie lepszy wynik z tego samego testu?</p>
-        <button class="btn-secondary" disabled>🔒 Wymaga serwera online</button>
+      <div class="card">
+        <h2>⚔️ 1v1 ze znajomym</h2>
+        <p class="hint">Wyzwij znajomego – kto dostanie lepszy wynik z tego samego testu?</p>
+        <button class="btn-primary" onclick="Multiplayer.openLobby()">⚔️ Zagraj 1v1</button>
+      </div>
+      <div class="card full-width">
+        <h2>🏆 Ranking graczy</h2>
+        <div id="leaderboardContainer"><p class="empty-msg">Ładowanie...</p></div>
       </div>
     </div>
   </section>
@@ -311,6 +316,67 @@
 
 </main>
 
+<!-- MODAL: Auth (Login / Register) -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>👤 Konto Pass+</h2>
+      <button class="modal-close" data-modal="authModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="authHint" class="hint" style="margin-bottom:0.75rem;display:none;"></p>
+      <div class="tabs" style="margin-bottom:1rem;">
+        <button class="tab active" id="tabLogin">Zaloguj się</button>
+        <button class="tab" id="tabRegister">Zarejestruj</button>
+      </div>
+
+      <!-- Login form -->
+      <div id="formLogin">
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="loginEmail" class="input-field" placeholder="twoj@email.pl" />
+        </div>
+        <div class="form-group">
+          <label>Hasło</label>
+          <input type="password" id="loginPassword" class="input-field" placeholder="Hasło" />
+        </div>
+        <div id="loginError" class="error-msg" style="display:none;"></div>
+        <button class="btn-primary" id="btnLogin" style="width:100%;margin-top:0.5rem;">Zaloguj się</button>
+      </div>
+
+      <!-- Register form -->
+      <div id="formRegister" style="display:none;">
+        <div class="form-group">
+          <label>Nazwa użytkownika</label>
+          <input type="text" id="regUsername" class="input-field" placeholder="np. Kacper123" maxlength="30" />
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="regEmail" class="input-field" placeholder="twoj@email.pl" />
+        </div>
+        <div class="form-group">
+          <label>Hasło (min. 6 znaków)</label>
+          <input type="password" id="regPassword" class="input-field" placeholder="Hasło" />
+        </div>
+        <div id="regError" class="error-msg" style="display:none;"></div>
+        <button class="btn-primary" id="btnRegister" style="width:100%;margin-top:0.5rem;">Zarejestruj się</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Multiplayer lobby -->
+<div class="modal-overlay" id="multiModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>⚔️ 1v1 ze znajomym</h2>
+      <button class="modal-close" data-modal="multiModal">✕</button>
+    </div>
+    <div class="modal-body" id="multiContent">
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Premium -->
 <div class="modal-overlay" id="premiumModal">
   <div class="modal modal-large">
@@ -331,14 +397,14 @@
         <li>🔒 1v1 ze znajomym (wkrótce)</li>
         <li>🔒 Synchronizacja między urządzeniami (wkrótce)</li>
       </ul>
-      <div class="hint" style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.3);border-radius:8px;padding:0.75rem;margin-top:1rem;">
-        ⚠️ <strong>Płatności online</strong> wymagają integracji z bramką płatności (np. PayU, Stripe, BLIK).<br>
-        To wymaga serwera – w tej wersji demo możesz aktywować tryb premium bezpłatnie.
+      <div class="hint" style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);border-radius:8px;padding:0.75rem;margin-top:1rem;">
+        ✅ Płatność przez <strong>kartę lub Przelewy24</strong> (Stripe). Bezpieczna i jednorazowa.<br>
+        Musisz być zalogowany żeby kupić premium.
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" data-modal="premiumModal">Anuluj</button>
-      <button class="btn-premium" id="btnActivatePremium">⭐ Aktywuj Premium (demo)</button>
+      <button class="btn-premium" id="btnActivatePremium">⭐ Kup Pass+ Premium – 5 zł</button>
     </div>
   </div>
 </div>
@@ -432,13 +498,16 @@
   </div>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/gamification.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/app.js"></script>
 <script src="js/notes.js"></script>
 <script src="js/topics.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/tests.js"></script>
+<script src="js/multiplayer.js"></script>
 <!-- Loads Transformers.js and exposes window.LocalAI (any browser, no API key) -->
 <script type="module" src="js/local-ai.js"></script>
 </body>
