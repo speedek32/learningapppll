@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pass+ – Zdaj Egzamin Zawodowy</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="theme-light">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="logo">🎯 Pass+</span>
+    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#" class="nav-item active" data-section="dashboard">
+      <span class="nav-icon">🏠</span><span class="nav-label">Pulpit</span>
+    </a>
+    <a href="#" class="nav-item" data-section="notes">
+      <span class="nav-icon">📝</span><span class="nav-label">Notatki</span>
+    </a>
+    <a href="#" class="nav-item" data-section="topics">
+      <span class="nav-icon">📚</span><span class="nav-label">Tematy</span>
+    </a>
+    <a href="#" class="nav-item" data-section="chat">
+      <span class="nav-icon">🤖</span><span class="nav-label">Asystent AI</span>
+    </a>
+    <a href="#" class="nav-item" data-section="tests">
+      <span class="nav-icon">📋</span><span class="nav-label">Testy</span>
+    </a>
+    <a href="#" class="nav-item" data-section="settings">
+      <span class="nav-icon">⚙️</span><span class="nav-label">Ustawienia</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div id="sidebarXP"></div>
+    <button class="btn-upgrade" id="btnUpgrade" onclick="App.openModal('premiumModal')">⭐ Pass+ Premium</button>
+    <button class="btn-theme" id="themeToggle">🌙 Ciemny tryb</button>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main" id="main">
+
+  <!-- Level-up toast -->
+  <div id="levelUpBanner" class="levelup-banner" style="display:none;"></div>
+
+  <!-- Ad banner (hidden for Pass+ users) -->
+  <div id="adBanner" class="ad-banner" style="display:none;">
+    <div class="ad-inner">
+      <span class="ad-label">REKLAMA</span>
+      <span class="ad-text">📣 Ogłoszenie sponsorowane – tutaj mogłaby być Twoja reklama</span>
+      <button class="btn-remove-ads" onclick="App.openModal('premiumModal')">⭐ Usuń reklamy – 5 zł</button>
+      <button class="ad-close" id="adClose">✕</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <section class="section active" id="section-dashboard">
+    <div class="section-header">
+      <h1>Witaj! 👋</h1>
+      <p class="subtitle">Twój panel nauki do egzaminów zawodowych</p>
+    </div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-value" id="statNotes">0</div>
+        <div class="stat-label">Notatki</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-value" id="statTopics">0</div>
+        <div class="stat-label">Tematy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="statStudied">0</div>
+        <div class="stat-label">Opanowane</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-value" id="statBestScore">—</div>
+        <div class="stat-label">Najlepszy wynik</div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card">
+        <h2>📋 Ostatnie testy</h2>
+        <div id="recentTests"><p class="empty-msg">Nie rozwiązałeś jeszcze żadnego testu.</p></div>
+      </div>
+      <div class="card">
+        <h2>📚 Tematy do nauki</h2>
+        <div id="topicsPreview"><p class="empty-msg">Brak tematów. Dodaj je w zakładce Tematy.</p></div>
+      </div>
+      <div class="card full-width">
+        <h2>🚀 Szybki start</h2>
+        <div class="quick-actions">
+          <button class="btn-primary" onclick="App.goto('notes')">➕ Dodaj notatkę</button>
+          <button class="btn-primary" onclick="App.goto('topics')">📌 Dodaj temat</button>
+          <button class="btn-primary" onclick="App.goto('tests')">🎯 Rozwiąż test</button>
+          <button class="btn-primary" onclick="App.goto('chat')">💬 Zapytaj AI</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>🔥 Twoje postępy</h2>
+        <div id="dashGamification"><p class="empty-msg">Ładowanie...</p></div>
+      </div>
+      <div class="card" style="opacity:0.75;">
+        <h2>⚔️ 1v1 ze znajomym <span class="coming-soon-badge">Wkrótce</span></h2>
+        <p class="hint">Wyślij znajomemu wyzwanie – kto dostanie lepszy wynik z tego samego testu?</p>
+        <button class="btn-secondary" disabled>🔒 Wymaga serwera online</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section class="section" id="section-notes">
+    <div class="section-header">
+      <h1>📝 Notatki</h1>
+      <button class="btn-primary" id="btnAddNote">➕ Nowa notatka</button>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="notesSearch" placeholder="Szukaj notatek..." class="input-field" />
+    </div>
+    <div class="notes-grid" id="notesGrid">
+      <p class="empty-msg">Brak notatek. Kliknij „Nowa notatka" aby dodać.</p>
+    </div>
+  </section>
+
+  <!-- TOPICS -->
+  <section class="section" id="section-topics">
+    <div class="section-header">
+      <h1>📚 Tematy</h1>
+      <button class="btn-primary" id="btnAddTopic">➕ Nowy temat</button>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="topicsSearch" placeholder="Szukaj tematów..." class="input-field" />
+    </div>
+    <div class="topics-list" id="topicsList">
+      <p class="empty-msg">Brak tematów. Kliknij „Nowy temat" aby dodać.</p>
+    </div>
+  </section>
+
+  <!-- CHAT -->
+  <section class="section" id="section-chat">
+    <div class="section-header">
+      <h1>🤖 Asystent AI</h1>
+      <div class="chat-controls">
+        <select id="chatTopicSelect" class="input-field select-sm">
+          <option value="">Wybierz temat (opcjonalnie)</option>
+        </select>
+        <button class="btn-secondary" id="btnNewChat">🗑️ Nowa rozmowa</button>
+      </div>
+    </div>
+    <div id="localAIDownloadBox" style="display:none;" class="card" style="margin-bottom:0.75rem;padding:1rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+        <span id="localAIDownloadLabel">⏬ Pobieranie modelu AI...</span>
+        <span id="localAIDownloadPct" style="font-weight:700;color:var(--primary)">0%</span>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar" id="localAIBar" style="width:0%"></div></div>
+      <p class="hint" style="margin-top:0.5rem;margin-bottom:0;">Model (~400 MB) pobiera się tylko raz i jest zapisywany w przeglądarce. Następnym razem uruchomi się natychmiast.</p>
+    </div>
+
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-bubble assistant">
+          <div class="bubble-content">
+            Cześć! Jestem Twoim asystentem do nauki egzaminów zawodowych. 🎓<br><br>
+            Możesz mnie zapytać o dowolny temat z zakresu Twojego egzaminu — wyjaśnię pojęcia, pomogę zrozumieć zagadnienia i przygotować się do testu.<br><br>
+            <span id="chatAIStatus" style="font-size:0.88em;">🔄 Sprawdzam dostępność AI...</span>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <textarea id="chatInput" class="chat-textarea" placeholder="Wpisz pytanie... (Enter = wyślij, Shift+Enter = nowa linia)" rows="2"></textarea>
+        <button class="btn-send" id="btnSendChat">➤</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTS -->
+  <section class="section" id="section-tests">
+    <div id="testsMenu">
+      <div class="section-header">
+        <h1>📋 Testy</h1>
+      </div>
+      <div class="test-categories" id="testCategories"></div>
+      <div class="card" style="margin-top:1rem;">
+        <h2>📊 Historia testów</h2>
+        <div id="testHistory"><p class="empty-msg">Brak historii testów.</p></div>
+      </div>
+    </div>
+
+    <div id="testsQuiz" style="display:none;">
+      <div class="quiz-header">
+        <div class="quiz-meta">
+          <span id="quizTitle">Test</span>
+          <span class="quiz-progress" id="quizProgress">Pytanie 1/20</span>
+        </div>
+        <div class="quiz-timer" id="quizTimer">⏱ 45:00</div>
+      </div>
+      <div class="quiz-body">
+        <div class="question-card" id="questionCard">
+          <div class="question-number" id="questionNum">Pytanie 1</div>
+          <div class="question-text" id="questionText"></div>
+          <div class="options-list" id="optionsList"></div>
+        </div>
+        <div class="quiz-nav">
+          <button class="btn-secondary" id="btnPrevQ" disabled>← Poprzednie</button>
+          <button class="btn-primary" id="btnNextQ">Następne →</button>
+          <button class="btn-danger" id="btnEndQuiz">Zakończ test</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="testsResult" style="display:none;">
+      <div class="section-header">
+        <h1>🏆 Wyniki testu</h1>
+      </div>
+      <div class="result-card" id="resultCard"></div>
+      <div class="result-review" id="resultReview"></div>
+      <button class="btn-primary" id="btnBackToTests">← Powrót do testów</button>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="section" id="section-settings">
+    <div class="section-header">
+      <h1>⚙️ Ustawienia</h1>
+    </div>
+    <div class="settings-grid">
+      <div class="card">
+        <h2>🤖 Asystent AI</h2>
+
+        <div class="form-group">
+          <label>Dostawca AI</label>
+          <select id="settingsProvider" class="input-field">
+            <option value="local">🧠 Lokalny AI – każda przeglądarka, BEZ klucza (zalecany)</option>
+            <option value="gemini">🆓 Google Gemini API – darmowy klucz</option>
+            <option value="openai">💳 OpenAI ChatGPT – płatny</option>
+          </select>
+        </div>
+
+        <div id="providerInfoBuiltin" class="hint" style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);border-radius:8px;padding:0.75rem;">
+          🧠 <strong>Działa w każdej przeglądarce – Chrome, Opera, Firefox, Edge!</strong><br>
+          AI pobiera się raz (~400 MB) i jest zapisywany w przeglądarce. Potem działa offline, bez klucza i bez konta.
+        </div>
+
+        <div id="providerInfoGemini" class="hint" style="display:none;background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.3);border-radius:8px;padding:0.75rem;">
+          ✅ <strong>Google Gemini API jest darmowy!</strong><br>
+          1. Wejdź na <strong>aistudio.google.com/app/apikey</strong><br>
+          2. Kliknij „Create API Key" → skopiuj i wklej poniżej
+        </div>
+
+        <div id="providerInfoOpenAI" class="hint" style="display:none;background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.3);border-radius:8px;padding:0.75rem;">
+          💳 OpenAI wymaga karty płatniczej. Klucz zaczyna się od <code>sk-</code>
+        </div>
+
+        <div class="form-group" style="margin-top:0.75rem;" id="apiKeyGroup">
+          <label id="apiKeyLabel">Klucz API (niepotrzebny dla lokalnego AI)</label>
+          <input type="password" id="settingsApiKey" class="input-field" placeholder="Nie wymagany dla lokalnego AI" disabled />
+        </div>
+
+        <div class="form-group" id="modelGroup" style="display:none;">
+          <label>Model AI</label>
+          <select id="settingsModel" class="input-field">
+            <optgroup label="🆓 Google Gemini (darmowy)">
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash – szybki i darmowy ✅</option>
+              <option value="gemini-1.5-pro">Gemini 1.5 Pro – lepszy, darmowy z limitem</option>
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash – najnowszy darmowy</option>
+            </optgroup>
+            <optgroup label="💳 OpenAI (płatny)">
+              <option value="gpt-4o-mini">GPT-4o Mini</option>
+              <option value="gpt-4o">GPT-4o</option>
+              <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <button class="btn-primary" id="btnSaveSettings">💾 Zapisz ustawienia</button>
+        <div id="settingsSaved" class="success-msg" style="display:none;">✅ Ustawienia zapisane!</div>
+      </div>
+      <div class="card">
+        <h2>🎯 Egzamin</h2>
+        <div class="form-group">
+          <label>Twój kierunek zawodowy</label>
+          <input type="text" id="settingsExam" class="input-field" placeholder="np. Technik informatyk (INF.02)" />
+        </div>
+        <div class="form-group">
+          <label>Imię (do powitania)</label>
+          <input type="text" id="settingsName" class="input-field" placeholder="np. Kacper" />
+        </div>
+        <button class="btn-primary" id="btnSaveProfile">💾 Zapisz profil</button>
+      </div>
+      <div class="card">
+        <h2>🔔 Powiadomienia</h2>
+        <p class="hint">Dostaj przypomnienia, żeby nie przerwać serii nauki.</p>
+        <div id="notifStatus" class="hint" style="margin-bottom:0.75rem;"></div>
+        <button class="btn-primary" id="btnRequestNotif">🔔 Włącz powiadomienia</button>
+      </div>
+      <div class="card">
+        <h2>🗑️ Dane aplikacji</h2>
+        <p class="hint">Usuń wszystkie zapisane dane (notatki, tematy, wyniki testów).</p>
+        <button class="btn-danger" id="btnClearData">Usuń wszystkie dane</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL: Premium -->
+<div class="modal-overlay" id="premiumModal">
+  <div class="modal modal-large">
+    <div class="modal-header">
+      <h2>⭐ Pass+ Premium</h2>
+      <button class="modal-close" data-modal="premiumModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="premium-hero">
+        <div class="premium-price">5 <span>zł</span></div>
+        <div class="premium-label">jednorazowa opłata – na zawsze</div>
+      </div>
+      <ul class="premium-features">
+        <li>✅ Brak reklam na zawsze</li>
+        <li>✅ Wszystkie kategorie egzaminów odblokowane</li>
+        <li>✅ Historia wyników bez limitu</li>
+        <li>✅ Wspierasz twórcę apki 🙏</li>
+        <li>🔒 1v1 ze znajomym (wkrótce)</li>
+        <li>🔒 Synchronizacja między urządzeniami (wkrótce)</li>
+      </ul>
+      <div class="hint" style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.3);border-radius:8px;padding:0.75rem;margin-top:1rem;">
+        ⚠️ <strong>Płatności online</strong> wymagają integracji z bramką płatności (np. PayU, Stripe, BLIK).<br>
+        To wymaga serwera – w tej wersji demo możesz aktywować tryb premium bezpłatnie.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" data-modal="premiumModal">Anuluj</button>
+      <button class="btn-premium" id="btnActivatePremium">⭐ Aktywuj Premium (demo)</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Note -->
+<div class="modal-overlay" id="noteModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="noteModalTitle">Nowa notatka</h2>
+      <button class="modal-close" data-modal="noteModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Tytuł</label>
+        <input type="text" id="noteTitle" class="input-field" placeholder="Tytuł notatki..." />
+      </div>
+      <div class="tabs">
+        <button class="tab active" data-tab="text">✏️ Tekst</button>
+        <button class="tab" data-tab="file">📎 Plik</button>
+      </div>
+      <div class="tab-panel active" id="tabText">
+        <div class="form-group">
+          <label>Treść</label>
+          <textarea id="noteContent" class="input-field textarea-lg" placeholder="Wpisz notatki..."></textarea>
+        </div>
+      </div>
+      <div class="tab-panel" id="tabFile">
+        <div class="file-drop-zone" id="fileDropZone">
+          <p>📎 Przeciągnij plik tutaj lub kliknij</p>
+          <p class="hint">Obsługiwane: .txt, .jpg, .png, .gif</p>
+          <input type="file" id="fileInput" accept=".txt,.jpg,.jpeg,.png,.gif" style="display:none" />
+        </div>
+        <div id="filePreview" style="display:none;"></div>
+      </div>
+      <div class="form-group">
+        <label>Tagi (oddzielone przecinkami)</label>
+        <input type="text" id="noteTags" class="input-field" placeholder="np. sieć, protokoły, TCP/IP" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" data-modal="noteModal">Anuluj</button>
+      <button class="btn-primary" id="btnSaveNote">💾 Zapisz</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Topic -->
+<div class="modal-overlay" id="topicModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="topicModalTitle">Nowy temat</h2>
+      <button class="modal-close" data-modal="topicModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nazwa tematu</label>
+        <input type="text" id="topicName" class="input-field" placeholder="np. Model OSI – warstwy sieci" />
+      </div>
+      <div class="form-group">
+        <label>Opis / notatki</label>
+        <textarea id="topicDesc" class="input-field textarea-md" placeholder="Krótki opis, kluczowe pojęcia..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Priorytet</label>
+        <select id="topicPriority" class="input-field">
+          <option value="low">🟢 Niski</option>
+          <option value="medium" selected>🟡 Średni</option>
+          <option value="high">🔴 Wysoki</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" data-modal="topicModal">Anuluj</button>
+      <button class="btn-primary" id="btnSaveTopic">💾 Zapisz</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: View Note -->
+<div class="modal-overlay" id="viewNoteModal">
+  <div class="modal modal-large">
+    <div class="modal-header">
+      <h2 id="viewNoteTitle">Notatka</h2>
+      <button class="modal-close" data-modal="viewNoteModal">✕</button>
+    </div>
+    <div class="modal-body" id="viewNoteBody"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" data-modal="viewNoteModal">Zamknij</button>
+      <button class="btn-danger" id="btnDeleteNoteConfirm">🗑️ Usuń</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/gamification.js"></script>
+<script src="js/app.js"></script>
+<script src="js/notes.js"></script>
+<script src="js/topics.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/tests.js"></script>
+<!-- Loads Transformers.js and exposes window.LocalAI (any browser, no API key) -->
+<script type="module" src="js/local-ai.js"></script>
+</body>
+</html>
