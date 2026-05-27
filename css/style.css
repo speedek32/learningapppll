@@ -25,6 +25,12 @@
   --sidebar-width: 240px;
   --sidebar-collapsed: 64px;
   --transition: 0.2s ease;
+
+  /* Zone system – overridden per breakpoint */
+  --zone-top: 0px;
+  --zone-bottom: 0px;
+  --zone-content: 100dvh;
+  --space: clamp(0.75rem, 3vw, 2rem);
 }
 
 .theme-dark {
@@ -54,6 +60,32 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ---- GLOBAL TOUCH & SCROLL ---- */
+button, a, [role="button"], .option-btn, .nav-item, .mobile-nav-item,
+.note-card, .test-cat-card, .stat-card, .topic-check {
+  touch-action: manipulation;
+}
+
+.chat-messages, .modal, .sidebar-nav, .notes-grid, .topics-list {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ---- FLUID TYPOGRAPHY (scales with viewport) ---- */
+.section-header h1 { font-size: clamp(1.2rem, 5vw, 1.6rem); }
+.stat-value        { font-size: clamp(1.4rem, 6vw, 2rem); }
+.result-score      { font-size: clamp(2.5rem, 12vw, 4rem); }
+.question-text     { font-size: clamp(0.95rem, 2.5vw, 1.05rem); }
+.room-code         { font-size: clamp(1.5rem, 6vw, 2.5rem); }
+.premium-price     { font-size: clamp(2.5rem, 10vw, 3.5rem); }
+
+/* ---- FLUID GRIDS (never overflow on any screen) ---- */
+.notes-grid      { grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); }
+.test-categories { grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); }
+.stats-grid      { grid-template-columns: repeat(auto-fit,  minmax(min(160px, calc(50% - 0.5rem)), 1fr)); }
+.dashboard-grid  { grid-template-columns: repeat(auto-fit,  minmax(min(300px, 100%), 1fr)); }
+.settings-grid   { grid-template-columns: repeat(auto-fit,  minmax(min(280px, 100%), 1fr)); }
 
 /* ============ SIDEBAR ============ */
 .sidebar {
@@ -1402,22 +1434,39 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
 
 /* ============ RESPONSIVE ============ */
 
-/* Tablets (641px – 1024px) */
+/* --- Zone variables per breakpoint --- */
+
+/* Tablets (641px – 1024px): collapsed sidebar, no mobile chrome */
+@media (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --zone-top: 0px;
+    --zone-bottom: 0px;
+    --zone-content: 100dvh;
+  }
+}
+
+/* Phones (≤ 640px): topbar + bottom nav zones */
+@media (max-width: 640px) {
+  :root {
+    --zone-top: 56px;
+    --zone-bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+    --zone-content: calc(100dvh - var(--zone-top) - var(--zone-bottom));
+  }
+}
+
+/* --- Tablet layout --- */
 @media (min-width: 641px) and (max-width: 1024px) {
   .sidebar { width: var(--sidebar-collapsed); }
   .sidebar .nav-label,
   .sidebar .logo,
   .sidebar .sidebar-footer .btn-theme span { display: none; }
-  .sidebar.collapsed .nav-label,
-  .sidebar.collapsed .logo { display: none; }
   .main { margin-left: var(--sidebar-collapsed); padding: 1.25rem; }
-  .chat-container { height: calc(100svh - 160px); }
-  .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+  .chat-container { height: calc(var(--zone-content) - 160px); }
   .section-header { flex-direction: column; align-items: flex-start; }
   .quiz-header { flex-direction: column; gap: 0.5rem; }
 }
 
-/* Phones (≤ 640px) */
+/* --- Phone layout --- */
 @media (max-width: 640px) {
   /* Show mobile chrome */
   .mobile-topbar { display: flex; }
@@ -1432,7 +1481,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
   }
   .sidebar.mobile-open { transform: translateX(0); }
 
-  /* Force sidebar labels visible when open */
+  /* Force sidebar labels visible when open as drawer */
   .sidebar .nav-label,
   .sidebar .logo,
   .sidebar .sidebar-footer .btn-theme span,
@@ -1442,34 +1491,31 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
   .sidebar .xp-label,
   .sidebar .sidebar-stats,
   .sidebar .xp-bar-wrap { display: flex !important; }
-  .sidebar .logo { display: block !important; }
+  .sidebar .logo,
   .sidebar .nav-label,
   .sidebar .sidebar-footer .btn-theme span,
   .sidebar .xp-label { display: block !important; }
 
-  /* Main content: make space for topbar + bottom nav */
+  /* Main: uses zone variables automatically */
   .main {
     margin-left: 0 !important;
-    padding: 0.875rem;
-    padding-top: calc(56px + 0.875rem);
-    padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px) + 0.875rem);
+    padding: var(--space);
+    padding-top: calc(var(--zone-top) + var(--space));
+    padding-bottom: calc(var(--zone-bottom) + var(--space));
+    min-height: 100dvh;
   }
 
   /* Prevent iOS input zoom (must be ≥ 16px) */
-  .input-field,
-  .chat-textarea,
+  .input-field, .chat-textarea,
   input, select, textarea { font-size: 16px; }
 
-  /* Chat height – use small viewport height to handle address bar */
+  /* Chat: fills exactly the content zone */
   .chat-container {
-    height: calc(100svh - 56px - 58px - 100px);
+    height: calc(var(--zone-content) - 80px);
     min-height: 280px;
   }
 
-  /* Layouts */
-  .dashboard-grid { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .settings-grid { grid-template-columns: 1fr; }
+  /* Section & form layouts */
   .section-header { flex-direction: column; align-items: flex-start; }
   .quiz-header { flex-direction: column; gap: 0.5rem; }
   .chat-controls { flex-direction: column; align-items: stretch; }
@@ -1477,31 +1523,35 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
   .topic-actions { flex-wrap: wrap; }
   .quick-actions { flex-direction: column; }
   .quick-actions .btn-primary { width: 100%; justify-content: center; }
+  .result-details { gap: 1rem; }
 
-  /* Touch targets */
-  .btn-primary, .btn-secondary, .btn-danger { min-height: 44px; }
+  /* Touch targets (Apple HIG: min 44×44pt) */
+  .btn-primary, .btn-secondary, .btn-danger, .btn-send { min-height: 44px; }
   .option-btn { min-height: 52px; padding: 0.9rem 1rem; }
   .nav-item { padding: 0.9rem 1rem; min-height: 44px; }
+  .modal-close { min-width: 44px; min-height: 44px; }
 
-  /* Room code: fits on small screens */
-  .room-code { font-size: 1.8rem; letter-spacing: 0.15em; padding: 0.6rem 1rem; }
-  .result-score { font-size: 3rem; }
+  /* Room code letter-spacing fits small screens */
+  .room-code { letter-spacing: 0.15em; padding: 0.6rem 1rem; }
 
-  /* Modals: slide up from bottom */
+  /* Modals: native sheet behaviour – slide up from bottom */
   .modal-overlay { align-items: flex-end; padding: 0; }
   .modal {
     max-width: 100%;
     border-radius: var(--radius) var(--radius) 0 0;
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    max-height: 92svh;
+    max-height: calc(var(--zone-content) + var(--zone-top));
   }
   .modal-large { max-width: 100%; }
 
-  /* Multiplayer overlay */
+  /* Multiplayer game overlay: sheet */
   .multi-overlay { padding: 0; align-items: flex-end; }
   .multi-game {
     border-radius: var(--radius) var(--radius) 0 0;
-    max-height: 95svh;
+    max-height: calc(var(--zone-content) + var(--zone-top));
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+
+  /* XP popup above bottom nav */
+  .xp-popup { bottom: calc(var(--zone-bottom) + 0.75rem); }
 }
