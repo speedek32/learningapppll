@@ -8,6 +8,15 @@
 </head>
 <body class="theme-light">
 
+<!-- Mobile top bar (phones only) -->
+<div class="mobile-topbar" id="mobileTopbar">
+  <span class="logo">🎯 Pass+</span>
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">☰</button>
+</div>
+
+<!-- Sidebar backdrop (closes drawer on tap) -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
@@ -497,6 +506,32 @@
     </div>
   </div>
 </div>
+
+<!-- Mobile bottom navigation (phones only) -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav">
+  <div class="mobile-bottom-nav-inner">
+    <a href="#" class="mobile-nav-item active" data-section="dashboard">
+      <span class="mobile-nav-icon">🏠</span>
+      <span class="mobile-nav-label">Pulpit</span>
+    </a>
+    <a href="#" class="mobile-nav-item" data-section="notes">
+      <span class="mobile-nav-icon">📝</span>
+      <span class="mobile-nav-label">Notatki</span>
+    </a>
+    <a href="#" class="mobile-nav-item" data-section="tests">
+      <span class="mobile-nav-icon">📋</span>
+      <span class="mobile-nav-label">Testy</span>
+    </a>
+    <a href="#" class="mobile-nav-item" data-section="chat">
+      <span class="mobile-nav-icon">🤖</span>
+      <span class="mobile-nav-label">AI</span>
+    </a>
+    <a href="#" class="mobile-nav-item" data-section="topics">
+      <span class="mobile-nav-icon">📚</span>
+      <span class="mobile-nav-label">Tematy</span>
+    </a>
+  </div>
+</nav>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/storage.js"></script>

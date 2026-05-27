@@ -20,6 +20,14 @@ const App = (() => {
       item.addEventListener('click', e => {
         e.preventDefault();
         goto(item.dataset.section);
+        closeMobileSidebar();
+      });
+    });
+
+    document.querySelectorAll('.mobile-nav-item').forEach(item => {
+      item.addEventListener('click', e => {
+        e.preventDefault();
+        goto(item.dataset.section);
       });
     });
 
@@ -29,10 +37,29 @@ const App = (() => {
       sidebar.classList.toggle('collapsed');
       main.classList.toggle('sidebar-collapsed');
     });
+
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      sidebar.classList.add('mobile-open');
+      backdrop.classList.add('open');
+    });
+
+    document.getElementById('sidebarBackdrop').addEventListener('click', () => {
+      closeMobileSidebar();
+    });
+  }
+
+  function closeMobileSidebar() {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebarBackdrop').classList.remove('open');
   }
 
   function goto(section) {
     document.querySelectorAll('.nav-item').forEach(i => {
+      i.classList.toggle('active', i.dataset.section === section);
+    });
+    document.querySelectorAll('.mobile-nav-item').forEach(i => {
       i.classList.toggle('active', i.dataset.section === section);
     });
     document.querySelectorAll('.section').forEach(s => {
@@ -322,7 +349,7 @@ const App = (() => {
     }
   });
 
-  return { init, goto, openModal, closeModal, updateDashboard, hidePremiumUI };
+  return { init, goto, openModal, closeModal, updateDashboard, hidePremiumUI, closeMobileSidebar };
 })();
 
 document.addEventListener('DOMContentLoaded', () => App.init());

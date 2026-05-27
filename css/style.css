@@ -39,7 +39,7 @@
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -1325,13 +1325,183 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
 .dot-anim { animation: blink 1.2s infinite; }
 
+/* ============ MOBILE TOP BAR ============ */
+.mobile-topbar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background: var(--bg-sidebar);
+  color: var(--text-sidebar);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 150;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.mobile-topbar .logo { font-size: 1.1rem; font-weight: 700; }
+
+.mobile-menu-btn {
+  background: none;
+  border: none;
+  color: var(--text-sidebar);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+/* ============ SIDEBAR BACKDROP ============ */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 99;
+}
+
+.sidebar-backdrop.open { display: block; }
+
+/* ============ MOBILE BOTTOM NAV ============ */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  z-index: 150;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mobile-bottom-nav-inner {
+  display: flex;
+  height: 58px;
+}
+
+.mobile-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.mobile-nav-item.active { color: var(--primary); }
+.mobile-nav-icon { font-size: 1.25rem; line-height: 1; }
+.mobile-nav-label { font-size: 0.63rem; font-weight: 500; }
+
 /* ============ RESPONSIVE ============ */
-@media (max-width: 768px) {
+
+/* Tablets (641px – 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
   .sidebar { width: var(--sidebar-collapsed); }
-  .sidebar .nav-label, .sidebar .logo { display: none; }
-  .main { margin-left: var(--sidebar-collapsed); padding: 1rem; }
-  .dashboard-grid { grid-template-columns: 1fr; }
-  .chat-container { height: calc(100vh - 140px); }
+  .sidebar .nav-label,
+  .sidebar .logo,
+  .sidebar .sidebar-footer .btn-theme span { display: none; }
+  .sidebar.collapsed .nav-label,
+  .sidebar.collapsed .logo { display: none; }
+  .main { margin-left: var(--sidebar-collapsed); padding: 1.25rem; }
+  .chat-container { height: calc(100svh - 160px); }
+  .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
   .section-header { flex-direction: column; align-items: flex-start; }
   .quiz-header { flex-direction: column; gap: 0.5rem; }
+}
+
+/* Phones (≤ 640px) */
+@media (max-width: 640px) {
+  /* Show mobile chrome */
+  .mobile-topbar { display: flex; }
+  .mobile-bottom-nav { display: block; }
+
+  /* Sidebar: hidden off-screen, slides in as drawer */
+  .sidebar {
+    transform: translateX(-100%);
+    width: var(--sidebar-width) !important;
+    transition: transform var(--transition);
+    z-index: 200;
+  }
+  .sidebar.mobile-open { transform: translateX(0); }
+
+  /* Force sidebar labels visible when open */
+  .sidebar .nav-label,
+  .sidebar .logo,
+  .sidebar .sidebar-footer .btn-theme span,
+  .sidebar .sidebar-user-info,
+  .sidebar .btn-logout,
+  .sidebar .btn-login-sidebar,
+  .sidebar .xp-label,
+  .sidebar .sidebar-stats,
+  .sidebar .xp-bar-wrap { display: flex !important; }
+  .sidebar .logo { display: block !important; }
+  .sidebar .nav-label,
+  .sidebar .sidebar-footer .btn-theme span,
+  .sidebar .xp-label { display: block !important; }
+
+  /* Main content: make space for topbar + bottom nav */
+  .main {
+    margin-left: 0 !important;
+    padding: 0.875rem;
+    padding-top: calc(56px + 0.875rem);
+    padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px) + 0.875rem);
+  }
+
+  /* Prevent iOS input zoom (must be ≥ 16px) */
+  .input-field,
+  .chat-textarea,
+  input, select, textarea { font-size: 16px; }
+
+  /* Chat height – use small viewport height to handle address bar */
+  .chat-container {
+    height: calc(100svh - 56px - 58px - 100px);
+    min-height: 280px;
+  }
+
+  /* Layouts */
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .settings-grid { grid-template-columns: 1fr; }
+  .section-header { flex-direction: column; align-items: flex-start; }
+  .quiz-header { flex-direction: column; gap: 0.5rem; }
+  .chat-controls { flex-direction: column; align-items: stretch; }
+  .chat-controls .select-sm { min-width: unset; width: 100%; }
+  .topic-actions { flex-wrap: wrap; }
+  .quick-actions { flex-direction: column; }
+  .quick-actions .btn-primary { width: 100%; justify-content: center; }
+
+  /* Touch targets */
+  .btn-primary, .btn-secondary, .btn-danger { min-height: 44px; }
+  .option-btn { min-height: 52px; padding: 0.9rem 1rem; }
+  .nav-item { padding: 0.9rem 1rem; min-height: 44px; }
+
+  /* Room code: fits on small screens */
+  .room-code { font-size: 1.8rem; letter-spacing: 0.15em; padding: 0.6rem 1rem; }
+  .result-score { font-size: 3rem; }
+
+  /* Modals: slide up from bottom */
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal {
+    max-width: 100%;
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    max-height: 92svh;
+  }
+  .modal-large { max-width: 100%; }
+
+  /* Multiplayer overlay */
+  .multi-overlay { padding: 0; align-items: flex-end; }
+  .multi-game {
+    border-radius: var(--radius) var(--radius) 0 0;
+    max-height: 95svh;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
