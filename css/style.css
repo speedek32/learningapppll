@@ -1434,54 +1434,42 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
 
 /* ============ RESPONSIVE ============ */
 
-/* --- Zone variables per breakpoint --- */
-
-/* Tablets (641px – 1024px): collapsed sidebar, no mobile chrome */
-@media (min-width: 641px) and (max-width: 1024px) {
-  :root {
-    --zone-top: 0px;
-    --zone-bottom: 0px;
-    --zone-content: 100dvh;
-  }
-}
-
-/* Phones (≤ 640px): topbar + bottom nav zones */
-@media (max-width: 640px) {
-  :root {
-    --zone-top: 56px;
-    --zone-bottom: calc(58px + env(safe-area-inset-bottom, 0px));
-    --zone-content: calc(100dvh - var(--zone-top) - var(--zone-bottom));
-  }
-}
-
-/* --- Tablet layout --- */
-@media (min-width: 641px) and (max-width: 1024px) {
+/* ---- Tablet: 769px – 1024px (collapsed icon sidebar) ---- */
+@media (min-width: 769px) and (max-width: 1024px) {
   .sidebar { width: var(--sidebar-collapsed); }
   .sidebar .nav-label,
   .sidebar .logo,
-  .sidebar .sidebar-footer .btn-theme span { display: none; }
+  .sidebar .sidebar-footer .btn-theme span,
+  .sidebar.collapsed .nav-label,
+  .sidebar.collapsed .logo { display: none; }
   .main { margin-left: var(--sidebar-collapsed); padding: 1.25rem; }
-  .chat-container { height: calc(var(--zone-content) - 160px); }
+  .chat-container { height: calc(100vh - 180px); }
   .section-header { flex-direction: column; align-items: flex-start; }
   .quiz-header { flex-direction: column; gap: 0.5rem; }
+  .mobile-topbar, .mobile-bottom-nav { display: none !important; }
 }
 
-/* --- Phone layout --- */
-@media (max-width: 640px) {
+/* ---- Mobile: ≤ 768px (phones + landscape iPhones) ---- */
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll */
+  body { overflow-x: hidden; }
+
   /* Show mobile chrome */
   .mobile-topbar { display: flex; }
   .mobile-bottom-nav { display: block; }
 
-  /* Sidebar: hidden off-screen, slides in as drawer */
+  /* Hide desktop sidebar completely – slide in as drawer */
   .sidebar {
+    width: 240px !important;
     transform: translateX(-100%);
-    width: var(--sidebar-width) !important;
-    transition: transform var(--transition);
+    transition: transform 0.2s ease;
     z-index: 200;
+    overflow-y: auto;
   }
+  .sidebar.collapsed { width: 240px !important; }
   .sidebar.mobile-open { transform: translateX(0); }
 
-  /* Force sidebar labels visible when open as drawer */
+  /* Always show all sidebar labels when drawer is open */
   .sidebar .nav-label,
   .sidebar .logo,
   .sidebar .sidebar-footer .btn-theme span,
@@ -1490,68 +1478,83 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
   .sidebar .btn-login-sidebar,
   .sidebar .xp-label,
   .sidebar .sidebar-stats,
-  .sidebar .xp-bar-wrap { display: flex !important; }
+  .sidebar .xp-bar-wrap,
+  .sidebar .btn-upgrade { display: flex !important; }
   .sidebar .logo,
   .sidebar .nav-label,
   .sidebar .sidebar-footer .btn-theme span,
   .sidebar .xp-label { display: block !important; }
 
-  /* Main: uses zone variables automatically */
+  /* ---- Main content zone ---- */
+  /* 56px topbar + 14px gap at top                          */
+  /* 58px bottom nav + safe area (Face ID home bar) + 14px  */
   .main {
     margin-left: 0 !important;
-    padding: var(--space);
-    padding-top: calc(var(--zone-top) + var(--space));
-    padding-bottom: calc(var(--zone-bottom) + var(--space));
-    min-height: 100dvh;
+    width: 100%;
+    padding: 14px;
+    padding-top: 70px;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Prevent iOS input zoom (must be ≥ 16px) */
-  .input-field, .chat-textarea,
-  input, select, textarea { font-size: 16px; }
+  /* ---- iOS Safari fixes ---- */
+  /* Prevent auto-zoom when focusing inputs (must be ≥ 16px) */
+  input, select, textarea,
+  .input-field, .chat-textarea { font-size: 16px !important; }
 
-  /* Chat: fills exactly the content zone */
+  /* ---- Chat fills the space between topbar and bottom nav ---- */
+  /* 56px top + 58px bottom + ~80px section header            */
   .chat-container {
-    height: calc(var(--zone-content) - 80px);
-    min-height: 280px;
+    height: calc(100vh - 200px);
+    height: calc(100dvh - 200px);
+    min-height: 300px;
   }
 
-  /* Section & form layouts */
-  .section-header { flex-direction: column; align-items: flex-start; }
+  /* ---- Layouts ---- */
+  .section-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .quiz-header { flex-direction: column; gap: 0.5rem; }
-  .chat-controls { flex-direction: column; align-items: stretch; }
+  .chat-controls { flex-direction: column; align-items: stretch; gap: 0.5rem; }
   .chat-controls .select-sm { min-width: unset; width: 100%; }
   .topic-actions { flex-wrap: wrap; }
+  .result-details { gap: 1rem; }
   .quick-actions { flex-direction: column; }
   .quick-actions .btn-primary { width: 100%; justify-content: center; }
-  .result-details { gap: 1rem; }
+  .search-bar .input-field { max-width: 100%; }
+  .quiz-nav { flex-wrap: wrap; }
+  .quiz-nav .btn-danger { margin-left: auto; }
 
-  /* Touch targets (Apple HIG: min 44×44pt) */
+  /* ---- Touch targets (Apple HIG minimum 44×44pt) ---- */
   .btn-primary, .btn-secondary, .btn-danger, .btn-send { min-height: 44px; }
-  .option-btn { min-height: 52px; padding: 0.9rem 1rem; }
-  .nav-item { padding: 0.9rem 1rem; min-height: 44px; }
-  .modal-close { min-width: 44px; min-height: 44px; }
+  .option-btn { min-height: 52px; padding: 0.9rem 1rem; font-size: 0.95rem; }
+  .nav-item { padding: 0.9rem 1rem; min-height: 48px; }
+  .modal-close { min-width: 44px; min-height: 44px; font-size: 1.2rem; }
+  .tab { padding: 0.6rem 1rem; min-height: 44px; }
 
-  /* Room code letter-spacing fits small screens */
-  .room-code { letter-spacing: 0.15em; padding: 0.6rem 1rem; }
-
-  /* Modals: native sheet behaviour – slide up from bottom */
+  /* ---- Modals: slide up from bottom like native iOS sheets ---- */
   .modal-overlay { align-items: flex-end; padding: 0; }
   .modal {
     max-width: 100%;
-    border-radius: var(--radius) var(--radius) 0 0;
+    border-radius: 16px 16px 0 0;
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    max-height: calc(var(--zone-content) + var(--zone-top));
+    max-height: 92vh;
+    max-height: 92dvh;
   }
   .modal-large { max-width: 100%; }
 
-  /* Multiplayer game overlay: sheet */
+  /* ---- Multiplayer game: sheet ---- */
   .multi-overlay { padding: 0; align-items: flex-end; }
   .multi-game {
-    border-radius: var(--radius) var(--radius) 0 0;
-    max-height: calc(var(--zone-content) + var(--zone-top));
+    border-radius: 16px 16px 0 0;
+    max-height: 92vh;
+    max-height: 92dvh;
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* XP popup above bottom nav */
-  .xp-popup { bottom: calc(var(--zone-bottom) + 0.75rem); }
+  /* ---- XP popup sits above the bottom nav ---- */
+  .xp-popup { bottom: calc(58px + env(safe-area-inset-bottom, 0px) + 12px); }
+
+  /* ---- Misc ---- */
+  .room-code { letter-spacing: 0.1em; padding: 0.6rem 1rem; }
+  .result-review .review-item { padding: 0.75rem 1rem; }
+  .lb-row { font-size: 0.82rem; }
+  .gami-stats { grid-template-columns: repeat(2, 1fr); }
 }
