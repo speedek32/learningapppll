@@ -1310,6 +1310,32 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
   margin-top: 0.5rem;
 }
 
+.profile-donate-card { margin-bottom: 1rem; }
+.profile-donate-btns { display: flex; gap: 0.6rem; margin-top: 0.75rem; flex-wrap: wrap; }
+
+.sidebar-donate { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.4rem; }
+
+.btn-donate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.15s;
+  cursor: pointer;
+  border: none;
+}
+.btn-donate:hover { opacity: 0.88; transform: translateY(-1px); }
+
+.btn-bmc    { background: #FFDD00; color: #000; }
+.btn-paypal { background: #003087; color: #fff; }
+
+.sidebar.collapsed .sidebar-donate { display: none; }
+
 @media (max-width: 600px) {
   .profile-grid { grid-template-columns: repeat(2, 1fr); }
 }

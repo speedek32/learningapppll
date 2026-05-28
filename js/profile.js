@@ -77,6 +77,15 @@ const Profile = (() => {
         }
       </div>
 
+      <div class="card profile-donate-card">
+        <h2>❤️ Wesprzyj twórców</h2>
+        <p class="hint">Jeśli aplikacja Ci pomogła, możesz postawić nam kawę lub wpłacić dowolną kwotę przez PayPal. Dziękujemy!</p>
+        <div class="profile-donate-btns">
+          <a class="btn-donate btn-bmc" href="https://buymeacoffee.com/yourname" target="_blank" rel="noopener">☕ Kup mi kawę</a>
+          <a class="btn-donate btn-paypal" href="https://paypal.me/yourname" target="_blank" rel="noopener">💙 Wesprzyj przez PayPal</a>
+        </div>
+      </div>
+
       ${user
         ? `<button class="btn-danger profile-logout" id="profileLogoutBtn">Wyloguj się</button>`
         : `<button class="btn-primary" style="width:100%;" onclick="App.openModal('authModal')">👤 Zaloguj / Zarejestruj się</button>`
