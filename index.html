@@ -27,8 +27,8 @@
     <a href="#" class="nav-item active" data-section="dashboard">
       <span class="nav-icon">🏠</span><span class="nav-label">Pulpit</span>
     </a>
-    <a href="#" class="nav-item" data-section="notes">
-      <span class="nav-icon">📝</span><span class="nav-label">Notatki</span>
+    <a href="#" class="nav-item" data-section="profile">
+      <span class="nav-icon">👤</span><span class="nav-label">Profil</span>
     </a>
     <a href="#" class="nav-item" data-section="topics">
       <span class="nav-icon">📚</span><span class="nav-label">Tematy</span>
@@ -75,9 +75,9 @@
     </div>
     <div class="stats-grid" id="statsGrid">
       <div class="stat-card">
-        <div class="stat-icon">📝</div>
-        <div class="stat-value" id="statNotes">0</div>
-        <div class="stat-label">Notatki</div>
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="statPassed">0</div>
+        <div class="stat-label">Zdane testy</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon">📚</div>
@@ -108,7 +108,7 @@
       <div class="card full-width">
         <h2>🚀 Szybki start</h2>
         <div class="quick-actions">
-          <button class="btn-primary" onclick="App.goto('notes')">➕ Dodaj notatkę</button>
+          <button class="btn-primary" onclick="App.goto('profile')">👤 Mój profil</button>
           <button class="btn-primary" onclick="App.goto('topics')">📌 Dodaj temat</button>
           <button class="btn-primary" onclick="App.goto('tests')">🎯 Rozwiąż test</button>
           <button class="btn-primary" onclick="App.goto('chat')">💬 Zapytaj AI</button>
@@ -130,18 +130,12 @@
     </div>
   </section>
 
-  <!-- NOTES -->
-  <section class="section" id="section-notes">
+  <!-- PROFILE -->
+  <section class="section" id="section-profile">
     <div class="section-header">
-      <h1>📝 Notatki</h1>
-      <button class="btn-primary" id="btnAddNote">➕ Nowa notatka</button>
+      <h1>👤 Profil</h1>
     </div>
-    <div class="search-bar">
-      <input type="text" id="notesSearch" placeholder="Szukaj notatek..." class="input-field" />
-    </div>
-    <div class="notes-grid" id="notesGrid">
-      <p class="empty-msg">Brak notatek. Kliknij „Nowa notatka" aby dodać.</p>
-    </div>
+    <div id="profileContent"></div>
   </section>
 
   <!-- TOPICS -->
@@ -418,48 +412,6 @@
   </div>
 </div>
 
-<!-- MODAL: Note -->
-<div class="modal-overlay" id="noteModal">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 id="noteModalTitle">Nowa notatka</h2>
-      <button class="modal-close" data-modal="noteModal">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Tytuł</label>
-        <input type="text" id="noteTitle" class="input-field" placeholder="Tytuł notatki..." />
-      </div>
-      <div class="tabs">
-        <button class="tab active" data-tab="text">✏️ Tekst</button>
-        <button class="tab" data-tab="file">📎 Plik</button>
-      </div>
-      <div class="tab-panel active" id="tabText">
-        <div class="form-group">
-          <label>Treść</label>
-          <textarea id="noteContent" class="input-field textarea-lg" placeholder="Wpisz notatki..."></textarea>
-        </div>
-      </div>
-      <div class="tab-panel" id="tabFile">
-        <div class="file-drop-zone" id="fileDropZone">
-          <p>📎 Przeciągnij plik tutaj lub kliknij</p>
-          <p class="hint">Obsługiwane: .txt, .jpg, .png, .gif</p>
-          <input type="file" id="fileInput" accept=".txt,.jpg,.jpeg,.png,.gif" style="display:none" />
-        </div>
-        <div id="filePreview" style="display:none;"></div>
-      </div>
-      <div class="form-group">
-        <label>Tagi (oddzielone przecinkami)</label>
-        <input type="text" id="noteTags" class="input-field" placeholder="np. sieć, protokoły, TCP/IP" />
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-secondary" data-modal="noteModal">Anuluj</button>
-      <button class="btn-primary" id="btnSaveNote">💾 Zapisz</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL: Topic -->
 <div class="modal-overlay" id="topicModal">
   <div class="modal">
@@ -492,21 +444,6 @@
   </div>
 </div>
 
-<!-- MODAL: View Note -->
-<div class="modal-overlay" id="viewNoteModal">
-  <div class="modal modal-large">
-    <div class="modal-header">
-      <h2 id="viewNoteTitle">Notatka</h2>
-      <button class="modal-close" data-modal="viewNoteModal">✕</button>
-    </div>
-    <div class="modal-body" id="viewNoteBody"></div>
-    <div class="modal-footer">
-      <button class="btn-secondary" data-modal="viewNoteModal">Zamknij</button>
-      <button class="btn-danger" id="btnDeleteNoteConfirm">🗑️ Usuń</button>
-    </div>
-  </div>
-</div>
-
 <!-- Mobile bottom navigation (phones only) -->
 <nav class="mobile-bottom-nav" id="mobileBottomNav">
   <div class="mobile-bottom-nav-inner">
@@ -514,9 +451,9 @@
       <span class="mobile-nav-icon">🏠</span>
       <span class="mobile-nav-label">Pulpit</span>
     </a>
-    <a href="#" class="mobile-nav-item" data-section="notes">
-      <span class="mobile-nav-icon">📝</span>
-      <span class="mobile-nav-label">Notatki</span>
+    <a href="#" class="mobile-nav-item" data-section="profile">
+      <span class="mobile-nav-icon">👤</span>
+      <span class="mobile-nav-label">Profil</span>
     </a>
     <a href="#" class="mobile-nav-item" data-section="tests">
       <span class="mobile-nav-icon">📋</span>
@@ -538,7 +475,7 @@
 <script src="js/gamification.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/app.js"></script>
-<script src="js/notes.js"></script>
+<script src="js/profile.js"></script>
 <script src="js/topics.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/tests.js"></script>

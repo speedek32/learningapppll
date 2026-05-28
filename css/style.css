@@ -1227,6 +1227,93 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important;
 .sidebar.collapsed .btn-logout,
 .sidebar.collapsed .btn-login-sidebar { display: none; }
 
+/* ============ PROFILE ============ */
+.profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.5rem 1rem;
+  margin-bottom: 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.profile-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.profile-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 1rem 0.5rem !important;
+  text-align: center;
+}
+
+.profile-stat-icon { font-size: 1.5rem; }
+.profile-stat-value { font-size: 1.4rem; font-weight: 700; line-height: 1.1; }
+.profile-stat-label { font-size: 0.78rem; color: var(--text-muted); }
+
+.profile-major {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0.25rem 0 0;
+}
+
+.profile-cat-list { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
+
+.profile-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+
+.profile-cat-name { flex: 1; }
+.profile-cat-count { color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; }
+.profile-cat-avg { font-weight: 700; min-width: 3rem; text-align: right; }
+.profile-cat-avg.pass { color: var(--success); }
+.profile-cat-avg.fail { color: var(--danger); }
+
+.profile-logout {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .profile-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ============ LEADERBOARD ============ */
 .lb-row {
   display: flex;

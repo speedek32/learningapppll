@@ -68,7 +68,7 @@ const App = (() => {
     currentSection = section;
 
     if (section === 'dashboard') updateDashboard();
-    if (section === 'notes') Notes.render();
+    if (section === 'profile') Profile.render();
     if (section === 'topics') Topics.render();
     if (section === 'chat') Chat.init();
     if (section === 'tests') Tests.showMenu();
@@ -219,12 +219,11 @@ const App = (() => {
   }
 
   function updateDashboard() {
-    const notes = Storage.getNotes();
     const topics = Storage.getTopics();
     const results = Storage.getResults();
     const settings = Storage.getSettings();
 
-    document.getElementById('statNotes').textContent = notes.length;
+    document.getElementById('statPassed').textContent = results.filter(r => Math.round(r.score / r.total * 100) >= 50).length;
     document.getElementById('statTopics').textContent = topics.length;
     document.getElementById('statStudied').textContent = topics.filter(t => t.studied).length;
 
