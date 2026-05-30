@@ -19,6 +19,7 @@ const App = (() => {
     Gamification.init();
     Auth.init();
     Admin.init();
+    Questions.init();
 
     // Restore section from URL on load
     const initial = sectionFromPath();

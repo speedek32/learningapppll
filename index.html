@@ -153,13 +153,32 @@
   <section class="section" id="section-topics">
     <div class="section-header">
       <h1>Tematy</h1>
-      <button class="btn-primary" id="btnAddTopic">+ Nowy temat</button>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn-primary" id="btnAddTopic" style="display:none;">+ Nowy temat</button>
+        <button class="btn-primary" id="btnAddQuestion" style="display:none;">+ Nowe pytanie</button>
+      </div>
     </div>
-    <div class="search-bar">
-      <input type="text" id="topicsSearch" placeholder="Szukaj tematów..." class="input-field" />
+
+    <div class="tabs" id="topicsTabs">
+      <button class="tab active" data-topics-tab="topics">Tematy</button>
+      <button class="tab" data-topics-tab="questions">Własne pytania</button>
     </div>
-    <div class="topics-list" id="topicsList">
-      <p class="empty-msg">Brak tematów. Kliknij „Nowy temat" aby dodać.</p>
+
+    <!-- TAB: Tematy -->
+    <div id="topicsTabPanel" class="tab-panel active">
+      <div class="search-bar">
+        <input type="text" id="topicsSearch" placeholder="Szukaj tematów..." class="input-field" />
+      </div>
+      <div class="topics-list" id="topicsList">
+        <p class="empty-msg">Brak tematów. Kliknij „Nowy temat" aby dodać.</p>
+      </div>
+    </div>
+
+    <!-- TAB: Własne pytania -->
+    <div id="questionsTabPanel" class="tab-panel">
+      <div id="questionsContent">
+        <p class="empty-msg">Ładowanie...</p>
+      </div>
     </div>
   </section>
 
@@ -506,6 +525,57 @@
   </div>
 </nav>
 
+<!-- MODAL: Custom Question -->
+<div class="modal-overlay" id="questionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="questionModalTitle">Nowe pytanie</h2>
+      <button class="modal-close" data-modal="questionModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Kategoria</label>
+        <input type="text" id="qCategory" class="input-field" placeholder="np. INF.02, Własne, Angielski..." />
+      </div>
+      <div class="form-group">
+        <label>Treść pytania</label>
+        <textarea id="qQuestion" class="input-field textarea-md" placeholder="Wpisz treść pytania..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Odpowiedzi (min. 2, max. 4)</label>
+        <div id="qOptionsWrap" style="display:flex;flex-direction:column;gap:0.4rem;">
+          <div class="q-option-row">
+            <input type="radio" name="qCorrect" value="0" class="q-radio" />
+            <input type="text" class="input-field q-opt-input" placeholder="Odpowiedź A" />
+          </div>
+          <div class="q-option-row">
+            <input type="radio" name="qCorrect" value="1" class="q-radio" />
+            <input type="text" class="input-field q-opt-input" placeholder="Odpowiedź B" />
+          </div>
+          <div class="q-option-row">
+            <input type="radio" name="qCorrect" value="2" class="q-radio" />
+            <input type="text" class="input-field q-opt-input" placeholder="Odpowiedź C (opcjonalnie)" />
+          </div>
+          <div class="q-option-row">
+            <input type="radio" name="qCorrect" value="3" class="q-radio" />
+            <input type="text" class="input-field q-opt-input" placeholder="Odpowiedź D (opcjonalnie)" />
+          </div>
+        </div>
+        <p class="hint" style="margin-top:0.5rem;">Zaznacz kółko przy poprawnej odpowiedzi.</p>
+      </div>
+      <div class="form-group">
+        <label>Wyjaśnienie (opcjonalnie)</label>
+        <textarea id="qExplanation" class="input-field textarea-md" placeholder="Wyjaśnienie dlaczego ta odpowiedź jest poprawna..."></textarea>
+      </div>
+      <div id="questionError" class="error-msg" style="display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" data-modal="questionModal">Anuluj</button>
+      <button class="btn-primary" id="btnSaveQuestion">Zapisz pytanie</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: New Ticket -->
 <div class="modal-overlay" id="ticketModal">
   <div class="modal">
@@ -564,6 +634,7 @@
 <script src="js/chat.js?v=2"></script>
 <script src="js/tests.js?v=2"></script>
 <script src="js/multiplayer.js?v=2"></script>
+<script src="js/questions.js?v=1"></script>
 <script src="js/support.js?v=2"></script>
 <script src="js/admin.js?v=2"></script>
 <!-- Loads Transformers.js and exposes window.LocalAI (any browser, no API key) -->

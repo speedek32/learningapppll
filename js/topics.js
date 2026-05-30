@@ -127,9 +127,9 @@ const Topics = (() => {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  document.getElementById('btnAddTopic').addEventListener('click', openAdd);
-  document.getElementById('btnSaveTopic').addEventListener('click', saveTopic);
-  document.getElementById('topicsSearch').addEventListener('input', e => render(e.target.value));
+  document.getElementById('btnAddTopic')  ?.addEventListener('click', openAdd);
+  document.getElementById('btnSaveTopic') ?.addEventListener('click', saveTopic);
+  document.getElementById('topicsSearch') ?.addEventListener('input', e => render(e.target.value));
 
   return { render };
 })();

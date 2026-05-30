@@ -49,6 +49,18 @@ db.exec(`
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );
 
+  CREATE TABLE IF NOT EXISTS custom_questions (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL,
+    category    TEXT    DEFAULT 'Własne',
+    question    TEXT    NOT NULL,
+    options     TEXT    NOT NULL,
+    answer      INTEGER NOT NULL,
+    explanation TEXT    DEFAULT '',
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+
   CREATE TABLE IF NOT EXISTS ticket_replies (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
     ticket_id  INTEGER NOT NULL,

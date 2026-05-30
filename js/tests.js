@@ -470,7 +470,43 @@ const Tests = (() => {
     App.updateDashboard();
   });
 
+  function startCustomQuiz(customQuestions) {
+    if (!customQuestions.length) return;
+
+    // Normalise custom question format to match the quiz engine format
+    const normalised = customQuestions.map(q => ({
+      q:    q.question,
+      opts: q.options,
+      ans:  q.answer,
+      exp:  q.explanation || '',
+    }));
+
+    const fakeCat = {
+      name: 'Własne pytania',
+      passScore: 50,
+      time: Math.ceil(normalised.length * 1.5), // ~1.5 min per question
+    };
+
+    quizState = {
+      cat: fakeCat,
+      questions: normalised,
+      answers: new Array(normalised.length).fill(null),
+      current: 0,
+      startTime: Date.now(),
+      timeLeft: fakeCat.time * 60,
+      finished: false,
+    };
+
+    document.getElementById('testsMenu').style.display    = 'none';
+    document.getElementById('testsQuiz').style.display    = '';
+    document.getElementById('testsResult').style.display  = 'none';
+    document.getElementById('quizTitle').textContent      = 'Własne pytania';
+
+    startTimer();
+    renderQuestion();
+  }
+
   function getCategories() { return CATEGORIES; }
 
-  return { showMenu, getCategories };
+  return { showMenu, getCategories, startCustomQuiz };
 })();

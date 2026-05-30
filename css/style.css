@@ -1915,3 +1915,23 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
 }
 .admin-toggle--on { background: rgba(26,138,74,0.12); color: var(--success); border-color: rgba(26,138,74,0.3); }
 .admin-toggle:hover { border-color: var(--text-muted); color: var(--text); }
+
+/* ============ CUSTOM QUESTIONS ============ */
+.q-option-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.q-radio {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.q-opt-input { flex: 1; }
+
+.question-row { transition: border-color var(--transition); }
+.question-row:hover { border-color: var(--text-muted); }
