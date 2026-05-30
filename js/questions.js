@@ -189,7 +189,6 @@ const Questions = (() => {
 
   function startQuiz(questions) {
     if (!questions.length) return;
-    // Shuffle and pass to Tests module
     const shuffled = [...questions].sort(() => Math.random() - 0.5).slice(0, Math.min(questions.length, 20));
     Tests.startCustomQuiz(shuffled);
     App.goto('tests');

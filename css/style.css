@@ -1935,3 +1935,6 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
 
 .question-row { transition: border-color var(--transition); }
 .question-row:hover { border-color: var(--text-muted); }
+
+.test-cat-custom { border-style: dashed; }
+.test-cat-custom:hover { border-style: solid; }

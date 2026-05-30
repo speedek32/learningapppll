@@ -198,6 +198,38 @@ const Tests = (() => {
     document.getElementById('testsResult').style.display = 'none';
     renderCategories();
     renderHistory();
+    loadCustomQuestions();
+  }
+
+  async function loadCustomQuestions() {
+    const customCat = CATEGORIES.find(c => c.id === 'custom');
+    if (!customCat) return;
+
+    if (!Auth.getUser()) {
+      customCat.questions = [];
+      customCat.desc = 'Zaloguj się, żeby używać własnych pytań.';
+      renderCategories();
+      return;
+    }
+
+    try {
+      const questions = await Auth.apiFetch('/api/questions');
+      customCat.questions = questions.map(q => ({
+        q:    q.question,
+        opts: q.options,
+        ans:  q.answer,
+        exp:  q.explanation || '',
+      }));
+      customCat.desc = questions.length
+        ? `${questions.length} własnych pytań z zakładki Tematy.`
+        : 'Brak pytań. Dodaj je w zakładce Tematy → Własne pytania.';
+      customCat.time = Math.max(5, Math.ceil(Math.min(questions.length, 20) * 1.5));
+      renderCategories();
+    } catch {
+      customCat.questions = [];
+      customCat.desc = 'Nie udało się załadować własnych pytań.';
+      renderCategories();
+    }
   }
 
   function renderCategories() {
@@ -205,7 +237,7 @@ const Tests = (() => {
     el.innerHTML = CATEGORIES.map(cat => {
       const qCount = cat.questions.length;
       return `
-        <div class="test-cat-card" data-cat="${cat.id}">
+        <div class="test-cat-card${cat.id === 'custom' ? ' test-cat-custom' : ''}" data-cat="${cat.id}">
           <div class="test-cat-icon">${cat.icon}</div>
           <div class="test-cat-name">${cat.name}</div>
           <div class="test-cat-desc">${cat.desc}</div>
@@ -242,7 +274,12 @@ const Tests = (() => {
   function startQuiz(catId) {
     const cat = CATEGORIES.find(c => c.id === catId);
     if (!cat || !cat.questions.length) {
-      alert('Brak pytań w tej kategorii.'); return;
+      if (catId === 'custom') {
+        alert('Brak własnych pytań. Dodaj je w zakładce Tematy → Własne pytania.');
+      } else {
+        alert('Brak pytań w tej kategorii.');
+      }
+      return;
     }
 
     const shuffled = [...cat.questions].sort(() => Math.random() - 0.5).slice(0, Math.min(20, cat.questions.length));
