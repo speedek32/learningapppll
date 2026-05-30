@@ -9,12 +9,14 @@ const Auth = (() => {
   function isLoggedIn() { return !!currentUser; }
   function isPremium() { return currentUser?.is_premium || Gamification.isAdFree(); }
 
-  // Attach Authorization header to fetch calls
-  function apiFetch(url, opts = {}) {
+  // Attach Authorization header + parse JSON, throw on error
+  async function apiFetch(url, opts = {}) {
     const token = getToken();
     opts.headers = { 'Content-Type': 'application/json', ...(opts.headers || {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) };
-    if (opts.body && typeof opts.body === 'object') opts.body = JSON.stringify(opts.body);
-    return fetch(url, opts);
+    const res  = await fetch(url, opts);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
   }
 
   // ── Init ───────────────────────────────────────────────────────
@@ -23,14 +25,13 @@ const Auth = (() => {
     if (!token) { renderSidebar(); return; }
 
     try {
-      const res = await fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) { clearToken(); renderSidebar(); return; }
-      const data = await res.json();
+      const data = await apiFetch('/api/auth/me');
       currentUser = { ...data, token };
       renderSidebar();
       if (currentUser.is_premium) Gamification.setAdFree();
       checkPremiumParam();
     } catch {
+      clearToken();
       renderSidebar();
     }
   }
@@ -49,9 +50,7 @@ const Auth = (() => {
 
   // ── Register ───────────────────────────────────────────────────
   async function register(username, email, password) {
-    const res  = await apiFetch('/api/auth/register', { method: 'POST', body: { username, email, password } });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    const data = await apiFetch('/api/auth/register', { method: 'POST', body: JSON.stringify({ username, email, password }) });
     setToken(data.token);
     currentUser = data;
     renderSidebar();
@@ -60,9 +59,7 @@ const Auth = (() => {
 
   // ── Login ──────────────────────────────────────────────────────
   async function login(email, password) {
-    const res  = await apiFetch('/api/auth/login', { method: 'POST', body: { email, password } });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    const data = await apiFetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
     setToken(data.token);
     currentUser = data;
     if (data.is_premium) Gamification.setAdFree();
@@ -85,13 +82,13 @@ const Auth = (() => {
     try {
       await apiFetch('/api/results', {
         method: 'POST',
-        body: {
-          category:  result.category,
-          score:     result.score,
-          total:     result.total,
+        body: JSON.stringify({
+          category:   result.category,
+          score:      result.score,
+          total:      result.total,
           pass_score: result.passScore || 50,
-          passed:    Math.round(result.score / result.total * 100) >= (result.passScore || 50)
-        }
+          passed:     Math.round(result.score / result.total * 100) >= (result.passScore || 50)
+        })
       });
     } catch { /* offline – skip sync */ }
   }
@@ -105,23 +102,21 @@ const Auth = (() => {
       App.openModal('authModal');
       return;
     }
-    const res  = await apiFetch('/api/payment/create-session', { method: 'POST' });
-    const data = await res.json();
-    if (data.demo) {
-      // Stripe not configured – use demo activation
-      const r = await apiFetch('/api/payment/activate-demo', { method: 'POST' });
-      if (r.ok) {
+    try {
+      const data = await apiFetch('/api/payment/create-session', { method: 'POST' });
+      if (data.demo) {
+        await apiFetch('/api/payment/activate-demo', { method: 'POST' });
         currentUser.is_premium = 1;
         Gamification.setAdFree();
         renderSidebar();
         App.hidePremiumUI();
         App.closeModal('premiumModal');
         alert('⭐ Zdaj+ Premium aktywowane! (tryb demo)');
+      } else if (data.url) {
+        window.location.href = data.url;
       }
-    } else if (data.url) {
-      window.location.href = data.url;  // redirect to Stripe
-    } else {
-      alert('Błąd: ' + (data.error || 'Nieznany błąd'));
+    } catch (e) {
+      alert('Błąd: ' + e.message);
     }
   }
 
@@ -129,8 +124,7 @@ const Auth = (() => {
   async function loadLeaderboard(container) {
     container.innerHTML = '<p class="empty-msg">Ładowanie...</p>';
     try {
-      const res  = await fetch('/api/leaderboard');
-      const rows = await res.json();
+      const rows = await apiFetch('/api/leaderboard');
       if (!rows.length) { container.innerHTML = '<p class="empty-msg">Brak danych.</p>'; return; }
 
       const levels = ['🌱','📖','🔧','⭐','🎓','🏆','👑'];
@@ -172,8 +166,13 @@ const Auth = (() => {
         if (confirm('Wylogować się?')) logout();
       });
     } else {
-      el.innerHTML = `<button class="btn-login-sidebar" onclick="App.openModal('authModal')">👤 Zaloguj / Zarejestruj</button>`;
+      el.innerHTML = `<button class="btn-login-sidebar" onclick="App.openModal('authModal')">Zaloguj / Zarejestruj</button>`;
     }
+
+    // Show admin nav only for admins
+    document.querySelectorAll('.nav-admin').forEach(el => {
+      el.style.display = currentUser?.is_admin ? '' : 'none';
+    });
   }
 
   function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }

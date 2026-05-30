@@ -45,6 +45,12 @@
     <a href="#" class="nav-item" data-section="settings">
       <span class="nav-icon">◬</span><span class="nav-label">Ustawienia</span>
     </a>
+    <a href="#" class="nav-item" data-section="support">
+      <span class="nav-icon">◷</span><span class="nav-label">Pomoc</span>
+    </a>
+    <a href="#" class="nav-item nav-admin" data-section="admin" style="display:none;">
+      <span class="nav-icon">▣</span><span class="nav-label">Admin</span>
+    </a>
   </nav>
   <div class="sidebar-footer">
     <div id="sidebarUser"></div>
@@ -322,6 +328,31 @@
     </div>
   </section>
 
+  <!-- SUPPORT -->
+  <section class="section" id="section-support">
+    <div class="section-header">
+      <div>
+        <h1>Pomoc</h1>
+        <p class="subtitle">Zgłoś problem lub zadaj pytanie</p>
+      </div>
+      <button class="btn-primary" id="btnNewTicket">+ Nowe zgłoszenie</button>
+    </div>
+    <div id="supportContent"></div>
+  </section>
+
+  <!-- ADMIN -->
+  <section class="section" id="section-admin">
+    <div class="section-header">
+      <h1>Panel admina</h1>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-admin-tab="tickets">Zgłoszenia</button>
+      <button class="tab" data-admin-tab="users">Użytkownicy</button>
+    </div>
+    <div id="adminTicketsTab" class="tab-panel active"></div>
+    <div id="adminUsersTab" class="tab-panel"></div>
+  </section>
+
 </main>
 
 <!-- MODAL: Auth (Login / Register) -->
@@ -475,6 +506,54 @@
   </div>
 </nav>
 
+<!-- MODAL: New Ticket -->
+<div class="modal-overlay" id="ticketModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Nowe zgłoszenie</h2>
+      <button class="modal-close" data-modal="ticketModal">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Kategoria</label>
+        <select id="ticketCategory" class="input-field">
+          <option value="general">Ogólne</option>
+          <option value="bug">Błąd w aplikacji</option>
+          <option value="account">Konto / logowanie</option>
+          <option value="premium">Premium / płatności</option>
+          <option value="content">Treści / pytania</option>
+          <option value="other">Inne</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Temat</label>
+        <input type="text" id="ticketSubject" class="input-field" placeholder="Krótki opis problemu" maxlength="120" />
+      </div>
+      <div class="form-group">
+        <label>Wiadomość</label>
+        <textarea id="ticketMessage" class="input-field textarea-md" placeholder="Opisz szczegółowo swój problem lub pytanie..."></textarea>
+      </div>
+      <div id="ticketError" class="error-msg" style="display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" data-modal="ticketModal">Anuluj</button>
+      <button class="btn-primary" id="btnSubmitTicket">Wyślij zgłoszenie</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Ticket thread -->
+<div class="modal-overlay" id="ticketThreadModal">
+  <div class="modal modal-large">
+    <div class="modal-header">
+      <h2 id="ticketThreadTitle">Zgłoszenie</h2>
+      <button class="modal-close" data-modal="ticketThreadModal">✕</button>
+    </div>
+    <div class="modal-body" id="ticketThreadBody"></div>
+    <div class="modal-footer" id="ticketThreadFooter"></div>
+  </div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/gamification.js"></script>
@@ -485,6 +564,8 @@
 <script src="js/chat.js"></script>
 <script src="js/tests.js"></script>
 <script src="js/multiplayer.js"></script>
+<script src="js/support.js"></script>
+<script src="js/admin.js"></script>
 <!-- Loads Transformers.js and exposes window.LocalAI (any browser, no API key) -->
 <script type="module" src="js/local-ai.js"></script>
 </body>

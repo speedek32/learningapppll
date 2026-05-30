@@ -18,6 +18,7 @@ app.use(express.json());
 app.use('/api/auth',    require('./routes/auth').router);
 app.use('/api',         require('./routes/api'));
 app.use('/api/payment', require('./routes/payment'));
+app.use('/api/tickets', require('./routes/tickets'));
 
 // ── Static files ────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname)));

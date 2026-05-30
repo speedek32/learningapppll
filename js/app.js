@@ -10,6 +10,8 @@ const App = (() => {
     setupNotifications();
     Gamification.init();
     Auth.init();
+    Support.init();
+    Admin.init();
     goto('dashboard');
     loadSettings();
     updateDashboard();
@@ -68,11 +70,13 @@ const App = (() => {
     currentSection = section;
 
     if (section === 'dashboard') updateDashboard();
-    if (section === 'profile') Profile.render();
-    if (section === 'topics') Topics.render();
-    if (section === 'chat') Chat.init();
-    if (section === 'tests') Tests.showMenu();
-    if (section === 'settings') loadSettings();
+    if (section === 'profile')   Profile.render();
+    if (section === 'topics')    Topics.render();
+    if (section === 'chat')      Chat.init();
+    if (section === 'tests')     Tests.showMenu();
+    if (section === 'settings')  loadSettings();
+    if (section === 'support')   Support.render();
+    if (section === 'admin')     Admin.render();
   }
 
   function setupTheme() {
