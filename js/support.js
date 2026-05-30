@@ -1,12 +1,12 @@
 const Support = (() => {
 
   const CATEGORY_LABELS = {
-    general:  'Ogólne',
-    bug:      'Błąd',
-    account:  'Konto',
-    premium:  'Premium',
-    content:  'Treści',
-    other:    'Inne',
+    general: 'Ogólne',
+    bug:     'Błąd',
+    account: 'Konto',
+    premium: 'Premium',
+    content: 'Treści',
+    other:   'Inne',
   };
 
   const STATUS_LABELS = {
@@ -16,20 +16,22 @@ const Support = (() => {
   };
 
   function init() {
-    document.getElementById('btnNewTicket').addEventListener('click', () => {
-      if (!Auth.getUser()) {
-        App.openModal('authModal');
-        return;
-      }
-      clearForm();
-      App.openModal('ticketModal');
-    });
+    // Event listeners are set via onclick attributes — nothing needed here
+  }
 
-    document.getElementById('btnSubmitTicket').addEventListener('click', submitTicket);
+  function openNewTicket() {
+    if (!Auth.getUser()) {
+      App.openModal('authModal');
+      return;
+    }
+    clearForm();
+    App.openModal('ticketModal');
   }
 
   async function render() {
     const container = document.getElementById('supportContent');
+    if (!container) return;
+
     const user = Auth.getUser();
 
     if (!user) {
@@ -46,8 +48,8 @@ const Support = (() => {
     try {
       const tickets = await Auth.apiFetch('/api/tickets');
       renderList(container, tickets);
-    } catch {
-      container.innerHTML = `<p class="empty-msg">Błąd ładowania zgłoszeń.</p>`;
+    } catch (e) {
+      container.innerHTML = `<p class="empty-msg">Błąd ładowania zgłoszeń: ${escHtml(e.message || '')}</p>`;
     }
   }
 
@@ -56,7 +58,7 @@ const Support = (() => {
       container.innerHTML = `
         <div class="card" style="text-align:center;padding:2rem;">
           <p style="color:var(--text-muted);margin-bottom:0.5rem;font-size:1.1rem;font-weight:700;">Brak zgłoszeń</p>
-          <p style="color:var(--text-muted);font-size:0.875rem;">Masz problem? Kliknij „Nowe zgłoszenie".</p>
+          <p style="color:var(--text-muted);font-size:0.875rem;">Masz problem? Kliknij „+ Nowe zgłoszenie".</p>
         </div>`;
       return;
     }
@@ -80,10 +82,11 @@ const Support = (() => {
   }
 
   async function openThread(id) {
-    const modal = document.getElementById('ticketThreadModal');
-    const title = document.getElementById('ticketThreadTitle');
-    const body  = document.getElementById('ticketThreadBody');
+    const body   = document.getElementById('ticketThreadBody');
     const footer = document.getElementById('ticketThreadFooter');
+    const title  = document.getElementById('ticketThreadTitle');
+
+    if (!body) return;
 
     body.innerHTML = `<p class="empty-msg">Ładowanie...</p>`;
     footer.innerHTML = '';
@@ -98,10 +101,9 @@ const Support = (() => {
 
       body.innerHTML = `
         <div class="ticket-meta-bar">
-          <span class="ticket-status ticket-status--${ticket.status}">${STATUS_LABELS[ticket.status]}</span>
+          <span class="ticket-status ticket-status--${ticket.status}">${STATUS_LABELS[ticket.status] || ticket.status}</span>
           <span style="color:var(--text-muted);font-size:0.8rem;">${CATEGORY_LABELS[ticket.category] || ticket.category} · ${formatDate(ticket.created_at)}</span>
         </div>
-
         <div class="ticket-thread">
           <div class="ticket-msg ticket-msg--user">
             <div class="ticket-msg-header">
@@ -110,7 +112,6 @@ const Support = (() => {
             </div>
             <div class="ticket-msg-body">${escHtml(ticket.message)}</div>
           </div>
-
           ${ticket.replies.map(r => `
             <div class="ticket-msg ${r.is_admin ? 'ticket-msg--admin' : 'ticket-msg--user'}">
               <div class="ticket-msg-header">
@@ -120,13 +121,12 @@ const Support = (() => {
               <div class="ticket-msg-body">${escHtml(r.message)}</div>
             </div>
           `).join('')}
-        </div>
-      `;
+        </div>`;
 
       if (ticket.status !== 'closed' || isAdmin) {
         footer.innerHTML = `
-          <textarea id="replyText" class="input-field" style="flex:1;resize:none;min-height:60px;" placeholder="Twoja odpowiedź..."></textarea>
-          <div style="display:flex;gap:0.5rem;align-items:center;">
+          <textarea id="replyText" class="input-field" style="flex:1;resize:none;min-height:60px;margin-bottom:0.5rem;" placeholder="Twoja odpowiedź..."></textarea>
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
             ${isAdmin ? `
               <select id="replyStatus" class="input-field" style="width:auto;">
                 <option value="">Nie zmieniaj statusu</option>
@@ -136,36 +136,31 @@ const Support = (() => {
               </select>` : ''}
             <button class="btn-primary" onclick="Support.sendReply(${id})">Wyślij</button>
           </div>`;
-        footer.style.flexDirection = 'column';
-        footer.style.alignItems    = 'stretch';
-        footer.style.gap           = '0.5rem';
       } else {
         footer.innerHTML = `<span style="color:var(--text-muted);font-size:0.875rem;">Zgłoszenie zamknięte.</span>`;
       }
-    } catch {
-      body.innerHTML = `<p class="empty-msg">Błąd ładowania zgłoszenia.</p>`;
+    } catch (e) {
+      body.innerHTML = `<p class="empty-msg">Błąd: ${escHtml(e.message || 'Nie można załadować zgłoszenia')}</p>`;
     }
   }
 
   async function sendReply(ticketId) {
-    const msg = document.getElementById('replyText')?.value?.trim();
-    if (!msg) return;
-
+    const msgEl   = document.getElementById('replyText');
     const statusEl = document.getElementById('replyStatus');
+    const msg = msgEl?.value?.trim();
+    if (!msg) return;
 
     try {
       await Auth.apiFetch(`/api/tickets/${ticketId}/reply`, {
         method: 'POST',
         body: JSON.stringify({ message: msg }),
       });
-
       if (statusEl?.value) {
         await Auth.apiFetch(`/api/tickets/admin/${ticketId}/status`, {
           method: 'PATCH',
           body: JSON.stringify({ status: statusEl.value }),
         });
       }
-
       openThread(ticketId);
     } catch (e) {
       alert(e.message || 'Błąd wysyłania odpowiedzi');
@@ -173,22 +168,31 @@ const Support = (() => {
   }
 
   async function submitTicket() {
-    const subject  = document.getElementById('ticketSubject').value.trim();
-    const category = document.getElementById('ticketCategory').value;
-    const message  = document.getElementById('ticketMessage').value.trim();
-    const errEl    = document.getElementById('ticketError');
+    const subjectEl  = document.getElementById('ticketSubject');
+    const categoryEl = document.getElementById('ticketCategory');
+    const messageEl  = document.getElementById('ticketMessage');
+    const errEl      = document.getElementById('ticketError');
+    const btn        = document.getElementById('btnSubmitTicket');
 
-    errEl.style.display = 'none';
+    if (!subjectEl || !messageEl) return;
+
+    const subject  = subjectEl.value.trim();
+    const category = categoryEl?.value || 'general';
+    const message  = messageEl.value.trim();
+
+    if (errEl) errEl.style.display = 'none';
 
     if (!subject || !message) {
-      errEl.textContent = 'Wypełnij temat i wiadomość.';
-      errEl.style.display = 'block';
+      if (errEl) { errEl.textContent = 'Wypełnij temat i wiadomość.'; errEl.style.display = 'block'; }
       return;
     }
 
-    const btn = document.getElementById('btnSubmitTicket');
-    btn.disabled = true;
-    btn.textContent = 'Wysyłanie...';
+    if (!Auth.getUser()) {
+      if (errEl) { errEl.textContent = 'Musisz być zalogowany.'; errEl.style.display = 'block'; }
+      return;
+    }
+
+    if (btn) { btn.disabled = true; btn.textContent = 'Wysyłanie...'; }
 
     try {
       await Auth.apiFetch('/api/tickets', {
@@ -199,19 +203,20 @@ const Support = (() => {
       clearForm();
       render();
     } catch (e) {
-      errEl.textContent = e.message || 'Błąd wysyłania zgłoszenia.';
-      errEl.style.display = 'block';
+      if (errEl) { errEl.textContent = e.message || 'Błąd wysyłania zgłoszenia.'; errEl.style.display = 'block'; }
     } finally {
-      btn.disabled = false;
-      btn.textContent = 'Wyślij zgłoszenie';
+      if (btn) { btn.disabled = false; btn.textContent = 'Wyślij zgłoszenie'; }
     }
   }
 
   function clearForm() {
-    document.getElementById('ticketSubject').value  = '';
-    document.getElementById('ticketMessage').value  = '';
-    document.getElementById('ticketCategory').value = 'general';
+    const s = document.getElementById('ticketSubject');
+    const m = document.getElementById('ticketMessage');
+    const c = document.getElementById('ticketCategory');
     const e = document.getElementById('ticketError');
+    if (s) s.value = '';
+    if (m) m.value = '';
+    if (c) c.value = 'general';
     if (e) e.style.display = 'none';
   }
 
@@ -225,5 +230,5 @@ const Support = (() => {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
   }
 
-  return { init, render, openThread, sendReply };
+  return { init, openNewTicket, render, openThread, sendReply, submitTicket, clearForm };
 })();

@@ -61,7 +61,7 @@ router.post('/login', async (req, res) => {
 
 // GET /api/auth/me
 router.get('/me', auth, (req, res) => {
-  const user  = db.prepare('SELECT id, username, email, is_premium FROM users WHERE id = ?').get(req.user.id);
+  const user  = db.prepare('SELECT id, username, email, is_premium, is_admin FROM users WHERE id = ?').get(req.user.id);
   const stats = db.prepare('SELECT * FROM user_stats WHERE user_id = ?').get(req.user.id) || {};
   if (!user) return res.status(404).json({ error: 'Użytkownik nie istnieje' });
   res.json({ ...user, stats });

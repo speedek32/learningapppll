@@ -335,7 +335,7 @@
         <h1>Pomoc</h1>
         <p class="subtitle">Zgłoś problem lub zadaj pytanie</p>
       </div>
-      <button class="btn-primary" id="btnNewTicket">+ Nowe zgłoszenie</button>
+      <button class="btn-primary" id="btnNewTicket" onclick="Support.openNewTicket()">+ Nowe zgłoszenie</button>
     </div>
     <div id="supportContent"></div>
   </section>
@@ -537,7 +537,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" data-modal="ticketModal">Anuluj</button>
-      <button class="btn-primary" id="btnSubmitTicket">Wyślij zgłoszenie</button>
+      <button class="btn-primary" id="btnSubmitTicket" onclick="Support.submitTicket()">Wyślij zgłoszenie</button>
     </div>
   </div>
 </div>
