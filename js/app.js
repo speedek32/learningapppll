@@ -1,6 +1,13 @@
 const App = (() => {
   let currentSection = 'dashboard';
 
+  const SECTIONS = ['dashboard','profile','topics','chat','tests','settings','support','admin'];
+
+  function sectionFromPath() {
+    const p = window.location.pathname.replace(/^\//, '') || 'dashboard';
+    return SECTIONS.includes(p) ? p : 'dashboard';
+  }
+
   function init() {
     setupNav();
     setupTheme();
@@ -12,7 +19,17 @@ const App = (() => {
     Gamification.init();
     Auth.init();
     Admin.init();
-    goto('dashboard');
+
+    // Restore section from URL on load
+    const initial = sectionFromPath();
+    history.replaceState({ section: initial }, '', initial === 'dashboard' ? '/' : '/' + initial);
+    goto(initial, false);
+
+    // Handle browser back/forward
+    window.addEventListener('popstate', e => {
+      goto(e.state?.section || 'dashboard', false);
+    });
+
     loadSettings();
     updateDashboard();
   }
@@ -77,7 +94,9 @@ const App = (() => {
     document.getElementById('sidebarBackdrop').classList.remove('open');
   }
 
-  function goto(section) {
+  function goto(section, pushHistory = true) {
+    if (!SECTIONS.includes(section)) section = 'dashboard';
+
     document.querySelectorAll('.nav-item').forEach(i => {
       i.classList.toggle('active', i.dataset.section === section);
     });
@@ -88,6 +107,11 @@ const App = (() => {
       s.classList.toggle('active', s.id === 'section-' + section);
     });
     currentSection = section;
+
+    if (pushHistory) {
+      const url = section === 'dashboard' ? '/' : '/' + section;
+      history.pushState({ section }, '', url);
+    }
 
     if (section === 'dashboard') updateDashboard();
     if (section === 'profile')   Profile.render();
