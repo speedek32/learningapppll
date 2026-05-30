@@ -1938,3 +1938,109 @@ button:disabled { opacity: 0.35; cursor: not-allowed; }
 
 .test-cat-custom { border-style: dashed; }
 .test-cat-custom:hover { border-style: solid; }
+
+/* ============ NAUKA (LEARN) ============ */
+.learn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.learn-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1rem;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  border-left: 3px solid var(--learn-color, var(--primary));
+}
+.learn-card:hover { background: var(--bg); border-color: var(--text-muted); }
+
+.learn-card-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+.learn-card-title { font-weight: 700; font-size: 0.875rem; letter-spacing: -0.02em; margin-bottom: 0.2rem; }
+.learn-card-count { font-size: 0.75rem; color: var(--text-muted); }
+
+.learn-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.learn-section-body { font-size: 0.875rem; line-height: 1.6; }
+
+.learn-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin-bottom: 0.5rem;
+}
+.learn-table th {
+  text-align: left;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.learn-table td {
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.learn-table tr:last-child td { border-bottom: none; }
+
+.learn-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+.learn-pills span {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.learn-code {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  line-height: 1.7;
+  white-space: pre;
+  overflow-x: auto;
+  margin-bottom: 0.5rem;
+}
+
+.learn-formula {
+  background: rgba(255,61,26,0.08);
+  border: 1px solid rgba(255,61,26,0.2);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  font-family: 'Courier New', monospace;
+}
+
+.learn-tip {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  font-style: italic;
+}

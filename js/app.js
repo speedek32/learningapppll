@@ -1,7 +1,7 @@
 const App = (() => {
   let currentSection = 'dashboard';
 
-  const SECTIONS = ['dashboard','profile','topics','chat','tests','settings','support','admin'];
+  const SECTIONS = ['dashboard','profile','topics','chat','tests','learn','settings','support','admin'];
 
   function sectionFromPath() {
     const p = window.location.pathname.replace(/^\//, '') || 'dashboard';
@@ -120,6 +120,7 @@ const App = (() => {
     if (section === 'chat')      Chat.init();
     if (section === 'tests')     Tests.showMenu();
     if (section === 'settings')  loadSettings();
+    if (section === 'learn')     Learn.render();
     if (section === 'support')   Support.render();
     if (section === 'admin')     Admin.render();
   }
