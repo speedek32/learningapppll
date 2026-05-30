@@ -41,11 +41,13 @@ router.post('/chat', async (req, res) => {
 
     if (!r.ok) {
       const txt = await r.text();
-      return res.status(502).json({ error: `Ollama error: ${txt}` });
+      console.error('[Ollama] HTTP', r.status, txt);
+      return res.status(502).json({ error: `Ollama (${r.status}): ${txt}` });
     }
 
     const data = await r.json();
-    const reply = data.message?.content || '(brak odpowiedzi)';
+    console.log('[Ollama] response keys:', Object.keys(data));
+    const reply = data.message?.content || data.response || '(brak odpowiedzi)';
     res.json({ reply });
 
   } catch (err) {
