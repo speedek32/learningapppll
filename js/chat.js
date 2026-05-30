@@ -2,44 +2,32 @@ const Chat = (() => {
   let messages = [];
   let currentTopicId = null;
   let isTyping = false;
+  let ollamaAvailable = null; // null=unknown, true/false
 
-  // ── Local AI (Transformers.js – any browser) ───────────────────
+  // ── Provider: Ollama (server-side) ────────────────────────────
 
-  function showDownloadBox(show) {
-    document.getElementById('localAIDownloadBox').style.display = show ? '' : 'none';
-  }
-
-  function onDownloadProgress(info) {
-    const pct = info.total ? Math.round((info.loaded / info.total) * 100) : 0;
-    document.getElementById('localAIBar').style.width = pct + '%';
-    document.getElementById('localAIDownloadPct').textContent = pct + '%';
-    document.getElementById('localAIDownloadLabel').textContent =
-      `⏬ Pobieranie modelu AI: ${info.file || ''}`;
-  }
-
-  async function ensureLocalAILoaded() {
-    // window.LocalAI is set by local-ai.js (ES module loaded in index.html)
-    if (!window.LocalAI) {
-      throw new Error('Biblioteka AI się jeszcze ładuje. Poczekaj chwilę i spróbuj ponownie.');
-    }
-
-    if (window.LocalAI.getStatus() === 'ready') return;
-
-    if (window.LocalAI.getStatus() === 'loading') {
-      throw new Error('Model AI jest już w trakcie pobierania. Poczekaj na zakończenie.');
-    }
-
-    showDownloadBox(true);
+  async function checkOllama() {
     try {
-      await window.LocalAI.load(onDownloadProgress);
-    } finally {
-      showDownloadBox(false);
+      const data = await Auth.apiFetch('/api/ai/health');
+      ollamaAvailable = data.ok;
+      return data;
+    } catch {
+      ollamaAvailable = false;
+      return { ok: false };
     }
   }
 
-  // ── External API helpers ───────────────────────────────────────
+  async function callOllama(systemPrompt, msgs) {
+    const data = await Auth.apiFetch('/api/ai/chat', {
+      method: 'POST',
+      body: JSON.stringify({ system: systemPrompt, messages: msgs.slice(-20) }),
+    });
+    return data.reply;
+  }
 
-  async function callGeminiAPI(apiKey, model, systemPrompt, msgs) {
+  // ── Provider: Gemini ──────────────────────────────────────────
+
+  async function callGemini(apiKey, model, systemPrompt, msgs) {
     const contents = msgs.slice(-20).map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }]
@@ -64,6 +52,8 @@ const Chat = (() => {
     return data.candidates?.[0]?.content?.parts?.[0]?.text || '(brak odpowiedzi)';
   }
 
+  // ── Provider: OpenAI ─────────────────────────────────────────
+
   async function callOpenAI(apiKey, model, systemPrompt, msgs) {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -83,7 +73,7 @@ const Chat = (() => {
     return data.choices?.[0]?.message?.content || '(brak odpowiedzi)';
   }
 
-  // ── Main send ──────────────────────────────────────────────────
+  // ── Main send ─────────────────────────────────────────────────
 
   async function sendMessage() {
     if (isTyping) return;
@@ -92,7 +82,7 @@ const Chat = (() => {
     if (!text) return;
 
     const settings = Storage.getSettings();
-    const provider = settings.provider || 'local';
+    const provider = settings.provider || 'ollama';
 
     input.value = '';
     appendBubble('user', text);
@@ -101,7 +91,7 @@ const Chat = (() => {
     const topicContext = buildTopicContext();
     const examContext = settings.exam
       ? `Uczeń przygotowuje się do egzaminu zawodowego: ${settings.exam}.` : '';
-    const systemPrompt = `Jesteś asystentem do nauki egzaminów zawodowych w Polsce (egzaminy OKE). ${examContext} ${topicContext} Odpowiadaj po polsku, jasno i zwięźle. Używaj przykładów. Jeśli wyjaśniasz pojęcia techniczne, podawaj definicje. Możesz używać Markdown (pogrubienie, listy, kod).`;
+    const systemPrompt = `Jesteś asystentem do nauki egzaminów zawodowych w Polsce (egzaminy OKE/CKE). ${examContext} ${topicContext} Odpowiadaj PO POLSKU, jasno i zwięźle. Używaj przykładów. Jeśli wyjaśniasz pojęcia techniczne, podawaj definicje. Możesz używać Markdown (pogrubienie, listy, kod).`;
 
     const thinkingEl = appendThinking();
     isTyping = true;
@@ -109,17 +99,19 @@ const Chat = (() => {
     try {
       let reply;
 
-      if (provider === 'local') {
-        await ensureLocalAILoaded();
-        reply = await window.LocalAI.generate(systemPrompt, messages.slice(0, -1));
+      if (provider === 'ollama') {
+        reply = await callOllama(systemPrompt, messages);
 
       } else if (provider === 'gemini') {
         if (!settings.apiKey) { thinkingEl.remove(); messages.pop(); promptForKey('Gemini'); return; }
-        reply = await callGeminiAPI(settings.apiKey, settings.model || 'gemini-1.5-flash', systemPrompt, messages);
+        reply = await callGemini(settings.apiKey, settings.model || 'gemini-2.0-flash', systemPrompt, messages);
 
-      } else {
+      } else if (provider === 'openai') {
         if (!settings.apiKey) { thinkingEl.remove(); messages.pop(); promptForKey('OpenAI'); return; }
         reply = await callOpenAI(settings.apiKey, settings.model || 'gpt-4o-mini', systemPrompt, messages);
+
+      } else {
+        throw new Error('Nieznany dostawca AI. Sprawdź ustawienia.');
       }
 
       thinkingEl.remove();
@@ -136,11 +128,11 @@ const Chat = (() => {
   }
 
   function promptForKey(name) {
-    alert(`Brak klucza ${name} API!\nPrzejdź do Ustawień ⚙️ i podaj swój klucz.`);
+    alert(`Brak klucza ${name} API!\nPrzejdź do Ustawień i podaj swój klucz.`);
     App.goto('settings');
   }
 
-  // ── Chat helpers ───────────────────────────────────────────────
+  // ── Chat helpers ──────────────────────────────────────────────
 
   function buildTopicContext() {
     if (!currentTopicId) return '';
@@ -192,31 +184,33 @@ const Chat = (() => {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  // ── Init ───────────────────────────────────────────────────────
+  // ── Init & status ─────────────────────────────────────────────
 
-  function init() {
+  async function init() {
     populateTopicSelect();
-    updateStatusBadge();
+    await updateStatusBadge();
   }
 
-  function updateStatusBadge() {
+  async function updateStatusBadge() {
     const el = document.getElementById('chatAIStatus');
     if (!el) return;
-    const provider = Storage.getSettings().provider || 'local';
+    const provider = Storage.getSettings().provider || 'ollama';
 
-    if (provider === 'local') {
-      const s = window.LocalAI?.getStatus?.() || 'idle';
-      if (s === 'ready') {
-        el.innerHTML = '✅ <strong>Lokalny AI gotowy</strong> – działa offline, bez klucza!';
+    if (provider === 'ollama') {
+      el.innerHTML = '🔄 Sprawdzam połączenie z AI...';
+      el.style.color = 'var(--text-muted)';
+      const health = await checkOllama();
+      if (health.ok) {
+        el.innerHTML = `✅ <strong>Zdaj+ AI gotowy</strong> – model: <code>${health.active}</code>`;
         el.style.color = 'var(--success)';
       } else {
-        el.innerHTML = '🧠 <strong>Lokalny AI</strong> – wyślij wiadomość by pobrać model (~400 MB, tylko raz).';
-        el.style.color = 'var(--text-muted)';
+        el.innerHTML = '❌ <strong>AI niedostępny.</strong> Sprawdź czy Ollama działa na serwerze, lub zmień dostawcę w Ustawieniach.';
+        el.style.color = 'var(--danger)';
       }
     } else if (provider === 'gemini') {
       el.innerHTML = '🆓 Używasz <strong>Google Gemini API</strong>.';
       el.style.color = 'var(--primary)';
-    } else {
+    } else if (provider === 'openai') {
       el.innerHTML = '💳 Używasz <strong>OpenAI API</strong>.';
       el.style.color = 'var(--primary)';
     }
@@ -255,8 +249,8 @@ const Chat = (() => {
     document.getElementById('chatMessages').innerHTML = `
       <div class="chat-bubble assistant">
         <div class="bubble-content">
-          Cześć! Jestem Twoim asystentem do nauki egzaminów zawodowych. 🎓<br><br>
-          Możesz mnie zapytać o dowolny temat – wyjaśnię pojęcia i przygotują się do testu.<br><br>
+          Cześć! Jestem Twoim asystentem do nauki egzaminów zawodowych.<br><br>
+          Zapytaj mnie o dowolny temat – wyjaśnię pojęcia, pomogę zrozumieć zagadnienia i przygotować się do testu.<br><br>
           <span id="chatAIStatus" style="font-size:0.88em;"></span>
         </div>
       </div>`;

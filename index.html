@@ -279,15 +279,15 @@
         <div class="form-group">
           <label>Dostawca AI</label>
           <select id="settingsProvider" class="input-field">
-            <option value="local">🧠 Lokalny AI – każda przeglądarka, BEZ klucza (zalecany)</option>
+            <option value="ollama">⚡ Zdaj+ AI (Ollama) – wbudowany, bez klucza (zalecany)</option>
             <option value="gemini">🆓 Google Gemini API – darmowy klucz</option>
             <option value="openai">💳 OpenAI ChatGPT – płatny</option>
           </select>
         </div>
 
         <div id="providerInfoBuiltin" class="hint" style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);border-radius:8px;padding:0.75rem;">
-          🧠 <strong>Działa w każdej przeglądarce – Chrome, Opera, Firefox, Edge!</strong><br>
-          AI pobiera się raz (~400 MB) i jest zapisywany w przeglądarce. Potem działa offline, bez klucza i bez konta.
+          ⚡ <strong>Zdaj+ AI działa na serwerze aplikacji – bez klucza, bez limitu!</strong><br>
+          Używa modelu <strong>qwen2.5:3b</strong> przez Ollama. Odpowiedzi mogą trwać 5–15 sekund (CPU).
         </div>
 
         <div id="providerInfoGemini" class="hint" style="display:none;background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.3);border-radius:8px;padding:0.75rem;">

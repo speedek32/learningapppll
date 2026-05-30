@@ -23,6 +23,7 @@ app.use('/api',         require('./routes/api'));
 app.use('/api/payment', require('./routes/payment'));
 app.use('/api/tickets',   require('./routes/tickets'));
 app.use('/api/questions', require('./routes/questions'));
+app.use('/api/ai',        require('./routes/ai'));
 
 // ── Static assets (scoped — never expose project root files) ─────
 app.use('/css', express.static(path.join(__dirname, 'css')));

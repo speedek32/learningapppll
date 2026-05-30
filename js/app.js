@@ -343,30 +343,30 @@ const App = (() => {
     document.getElementById('settingsModel').value = s.model || 'gemini-1.5-flash';
     document.getElementById('settingsExam').value = s.exam || '';
     document.getElementById('settingsName').value = s.name || '';
-    const provider = s.provider || 'local';
+    const provider = s.provider || 'ollama';
     document.getElementById('settingsProvider').value = provider;
     updateProviderUI(provider);
   }
 
   function updateProviderUI(provider) {
-    document.getElementById('providerInfoBuiltin').style.display = provider === 'local'   ? '' : 'none';
+    document.getElementById('providerInfoBuiltin').style.display = (provider === 'local' || provider === 'ollama') ? '' : 'none';
     document.getElementById('providerInfoGemini').style.display  = provider === 'gemini'  ? '' : 'none';
     document.getElementById('providerInfoOpenAI').style.display  = provider === 'openai'  ? '' : 'none';
 
-    const needsKey = provider !== 'local';
+    const needsKey = provider === 'gemini' || provider === 'openai';
     const keyInput = document.getElementById('settingsApiKey');
     keyInput.disabled = !needsKey;
-    keyInput.placeholder = provider === 'gemini' ? 'AIza...' : provider === 'openai' ? 'sk-...' : 'Nie wymagany dla lokalnego AI';
+    keyInput.placeholder = provider === 'gemini' ? 'AIza...' : provider === 'openai' ? 'sk-...' : 'Nie wymagany';
     document.getElementById('apiKeyLabel').textContent =
       provider === 'gemini' ? 'Klucz Google Gemini API' :
-      provider === 'openai' ? 'Klucz OpenAI API' : 'Klucz API (niepotrzebny dla lokalnego AI)';
+      provider === 'openai' ? 'Klucz OpenAI API' : 'Klucz API';
     document.getElementById('modelGroup').style.display = needsKey ? '' : 'none';
   }
 
   document.getElementById('settingsProvider').addEventListener('change', e => {
     const p = e.target.value;
     updateProviderUI(p);
-    if (p === 'gemini') document.getElementById('settingsModel').value = 'gemini-1.5-flash';
+    if (p === 'gemini') document.getElementById('settingsModel').value = 'gemini-2.0-flash';
     if (p === 'openai') document.getElementById('settingsModel').value = 'gpt-4o-mini';
   });
 
