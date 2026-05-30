@@ -63,4 +63,7 @@ db.exec(`
 // Add is_admin column to existing users tables (safe migration)
 try { db.exec('ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0'); } catch {};
 
+// Seed admin account
+db.prepare("UPDATE users SET is_admin = 1 WHERE email = 'speedek32pl@gmail.com'").run();
+
 module.exports = db;
