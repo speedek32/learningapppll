@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pass+ – Zdaj Egzamin Zawodowy</title>
+  <title>Zdaj+ – Zdaj Egzamin Zawodowy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 
 <!-- Mobile top bar (phones only) -->
 <div class="mobile-topbar" id="mobileTopbar">
-  <span class="logo">Pass+</span>
+  <span class="logo">Zdaj+</span>
   <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">☰</button>
 </div>
 
@@ -23,7 +23,7 @@
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <span class="logo">Pass+</span>
+    <span class="logo">Zdaj+</span>
     <button class="sidebar-toggle" id="sidebarToggle">☰</button>
   </div>
   <nav class="sidebar-nav">
@@ -49,7 +49,7 @@
   <div class="sidebar-footer">
     <div id="sidebarUser"></div>
     <div id="sidebarXP"></div>
-    <button class="btn-upgrade" id="btnUpgrade" onclick="App.openModal('premiumModal')">Pass+ Premium</button>
+    <button class="btn-upgrade" id="btnUpgrade" onclick="App.openModal('premiumModal')">Zdaj+ Premium</button>
     <div class="sidebar-donate">
       <a class="btn-donate btn-bmc" href="https://buymeacoffee.com/zdajplus" target="_blank" rel="noopener">☕ Kup mi kawę</a>
       <a class="btn-donate btn-paypal" href="https://paypal.me/yourname" target="_blank" rel="noopener">💙 PayPal</a>
@@ -64,7 +64,7 @@
   <!-- Level-up toast -->
   <div id="levelUpBanner" class="levelup-banner" style="display:none;"></div>
 
-  <!-- Ad banner (hidden for Pass+ users) -->
+  <!-- Ad banner (hidden for Zdaj+ users) -->
   <div id="adBanner" class="ad-banner" style="display:none;">
     <div class="ad-inner">
       <span class="ad-label">REKLAMA</span>
@@ -328,7 +328,7 @@
 <div class="modal-overlay" id="authModal">
   <div class="modal">
     <div class="modal-header">
-      <h2>Konto Pass+</h2>
+      <h2>Konto Zdaj+</h2>
       <button class="modal-close" data-modal="authModal">✕</button>
     </div>
     <div class="modal-body">
@@ -389,7 +389,7 @@
 <div class="modal-overlay" id="premiumModal">
   <div class="modal modal-large">
     <div class="modal-header">
-      <h2>Pass+ Premium</h2>
+      <h2>Zdaj+ Premium</h2>
       <button class="modal-close" data-modal="premiumModal">✕</button>
     </div>
     <div class="modal-body">
@@ -412,7 +412,7 @@
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" data-modal="premiumModal">Anuluj</button>
-      <button class="btn-premium" id="btnActivatePremium">⭐ Kup Pass+ Premium – 5 zł</button>
+      <button class="btn-premium" id="btnActivatePremium">⭐ Kup Zdaj+ Premium – 5 zł</button>
     </div>
   </div>
 </div>

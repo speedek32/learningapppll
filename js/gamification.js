@@ -150,7 +150,7 @@ const Gamification = (() => {
 
     setTimeout(() => {
       if (getData().lastActivityDate !== today) {
-        new Notification('Pass+ – Pamiętaj o nauce! 📚', {
+        new Notification('Zdaj+ – Pamiętaj o nauce! 📚', {
           body: `Masz serię ${d.streak} dni. Nie przerywaj jej! Rozwiąż jeden test.`,
           icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🎯</text></svg>'
         });

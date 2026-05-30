@@ -42,7 +42,7 @@ const Auth = (() => {
       if (currentUser) currentUser.is_premium = 1;
       renderSidebar();
       App.hidePremiumUI();
-      alert('⭐ Dziękujemy! Pass+ Premium zostało aktywowane!');
+      alert('⭐ Dziękujemy! Zdaj+ Premium zostało aktywowane!');
       history.replaceState({}, '', '/');
     }
   }
@@ -100,7 +100,7 @@ const Auth = (() => {
   async function buyPremium() {
     if (!isLoggedIn()) {
       const hint = document.getElementById('authHint');
-      hint.textContent = 'Zaloguj się żeby kupić Pass+ Premium.';
+      hint.textContent = 'Zaloguj się żeby kupić Zdaj+ Premium.';
       hint.style.display = 'block';
       App.openModal('authModal');
       return;
@@ -116,7 +116,7 @@ const Auth = (() => {
         renderSidebar();
         App.hidePremiumUI();
         App.closeModal('premiumModal');
-        alert('⭐ Pass+ Premium aktywowane! (tryb demo)');
+        alert('⭐ Zdaj+ Premium aktywowane! (tryb demo)');
       }
     } else if (data.url) {
       window.location.href = data.url;  // redirect to Stripe
@@ -165,7 +165,7 @@ const Auth = (() => {
         <div class="sidebar-user-info">
           <span class="sidebar-avatar">${currentUser.username[0].toUpperCase()}</span>
           <span class="sidebar-username">${escHtml(currentUser.username)}</span>
-          ${currentUser.is_premium ? '<span class="premium-star" title="Pass+ Premium">⭐</span>' : ''}
+          ${currentUser.is_premium ? '<span class="premium-star" title="Zdaj+ Premium">⭐</span>' : ''}
         </div>
         <button class="btn-logout" id="btnLogout">Wyloguj</button>`;
       document.getElementById('btnLogout').addEventListener('click', () => {

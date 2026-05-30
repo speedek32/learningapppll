@@ -31,7 +31,7 @@ const Profile = (() => {
 
     const userBlock = user
       ? `<div class="profile-avatar">${escHtml(user.username[0].toUpperCase())}</div>
-         <div class="profile-name">${escHtml(user.username)}${user.is_premium ? ' <span class="premium-star" title="Pass+ Premium">⭐</span>' : ''}</div>
+         <div class="profile-name">${escHtml(user.username)}${user.is_premium ? ' <span class="premium-star" title="Zdaj+ Premium">⭐</span>' : ''}</div>
          <div class="profile-email" style="color:var(--text-muted);font-size:0.88rem;">${escHtml(user.email || '')}</div>`
       : `<div class="profile-avatar">?</div>
          <div class="profile-name" style="color:var(--text-muted);">Niezalogowany</div>`;
