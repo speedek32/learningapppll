@@ -5,16 +5,36 @@ const App = (() => {
     setupNav();
     setupTheme();
     setupModals();
+    setupSupport();
     setupPremium();
     setupAuth();
     setupNotifications();
     Gamification.init();
     Auth.init();
-    Support.init();
     Admin.init();
     goto('dashboard');
     loadSettings();
     updateDashboard();
+  }
+
+  function setupSupport() {
+    var newBtn = document.getElementById('btnNewTicket');
+    var submitBtn = document.getElementById('btnSubmitTicket');
+    if (newBtn) {
+      newBtn.addEventListener('click', function() {
+        if (!Auth.getUser()) {
+          openModal('authModal');
+        } else {
+          Support.clearForm();
+          openModal('ticketModal');
+        }
+      });
+    }
+    if (submitBtn) {
+      submitBtn.addEventListener('click', function() {
+        Support.submitTicket();
+      });
+    }
   }
 
   function setupNav() {
