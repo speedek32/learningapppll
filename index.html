@@ -4,13 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pass+ – Zdaj Egzamin Zawodowy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="theme-light">
+<body class="theme-dark">
 
 <!-- Mobile top bar (phones only) -->
 <div class="mobile-topbar" id="mobileTopbar">
-  <span class="logo">🎯 Pass+</span>
+  <span class="logo">Pass+</span>
   <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">☰</button>
 </div>
 
@@ -20,33 +23,33 @@
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <span class="logo">🎯 Pass+</span>
+    <span class="logo">Pass+</span>
     <button class="sidebar-toggle" id="sidebarToggle">☰</button>
   </div>
   <nav class="sidebar-nav">
     <a href="#" class="nav-item active" data-section="dashboard">
-      <span class="nav-icon">🏠</span><span class="nav-label">Pulpit</span>
+      <span class="nav-icon">◈</span><span class="nav-label">Pulpit</span>
     </a>
     <a href="#" class="nav-item" data-section="profile">
-      <span class="nav-icon">👤</span><span class="nav-label">Profil</span>
+      <span class="nav-icon">◉</span><span class="nav-label">Profil</span>
     </a>
     <a href="#" class="nav-item" data-section="topics">
-      <span class="nav-icon">📚</span><span class="nav-label">Tematy</span>
+      <span class="nav-icon">◫</span><span class="nav-label">Tematy</span>
     </a>
     <a href="#" class="nav-item" data-section="chat">
-      <span class="nav-icon">🤖</span><span class="nav-label">Asystent AI</span>
+      <span class="nav-icon">◎</span><span class="nav-label">Asystent AI</span>
     </a>
     <a href="#" class="nav-item" data-section="tests">
-      <span class="nav-icon">📋</span><span class="nav-label">Testy</span>
+      <span class="nav-icon">▦</span><span class="nav-label">Testy</span>
     </a>
     <a href="#" class="nav-item" data-section="settings">
-      <span class="nav-icon">⚙️</span><span class="nav-label">Ustawienia</span>
+      <span class="nav-icon">◬</span><span class="nav-label">Ustawienia</span>
     </a>
   </nav>
   <div class="sidebar-footer">
     <div id="sidebarUser"></div>
     <div id="sidebarXP"></div>
-    <button class="btn-upgrade" id="btnUpgrade" onclick="App.openModal('premiumModal')">⭐ Pass+ Premium</button>
+    <button class="btn-upgrade" id="btnUpgrade" onclick="App.openModal('premiumModal')">Pass+ Premium</button>
     <div class="sidebar-donate">
       <a class="btn-donate btn-bmc" href="https://buymeacoffee.com/zdajplus" target="_blank" rel="noopener">☕ Kup mi kawę</a>
       <a class="btn-donate btn-paypal" href="https://paypal.me/yourname" target="_blank" rel="noopener">💙 PayPal</a>
@@ -74,27 +77,25 @@
   <!-- DASHBOARD -->
   <section class="section active" id="section-dashboard">
     <div class="section-header">
-      <h1>Witaj! 👋</h1>
-      <p class="subtitle">Twój panel nauki do egzaminów zawodowych</p>
+      <div>
+        <h1>Pulpit</h1>
+        <p class="subtitle">Twój panel nauki do egzaminów zawodowych</p>
+      </div>
     </div>
     <div class="stats-grid" id="statsGrid">
       <div class="stat-card">
-        <div class="stat-icon">✅</div>
         <div class="stat-value" id="statPassed">0</div>
         <div class="stat-label">Zdane testy</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">📚</div>
         <div class="stat-value" id="statTopics">0</div>
         <div class="stat-label">Tematy</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">✅</div>
         <div class="stat-value" id="statStudied">0</div>
         <div class="stat-label">Opanowane</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">🏆</div>
         <div class="stat-value" id="statBestScore">—</div>
         <div class="stat-label">Najlepszy wynik</div>
       </div>
@@ -102,33 +103,33 @@
 
     <div class="dashboard-grid">
       <div class="card">
-        <h2>📋 Ostatnie testy</h2>
+        <h2>Ostatnie testy</h2>
         <div id="recentTests"><p class="empty-msg">Nie rozwiązałeś jeszcze żadnego testu.</p></div>
       </div>
       <div class="card">
-        <h2>📚 Tematy do nauki</h2>
+        <h2>Tematy do nauki</h2>
         <div id="topicsPreview"><p class="empty-msg">Brak tematów. Dodaj je w zakładce Tematy.</p></div>
       </div>
       <div class="card full-width">
-        <h2>🚀 Szybki start</h2>
+        <h2>Szybki start</h2>
         <div class="quick-actions">
-          <button class="btn-primary" onclick="App.goto('profile')">👤 Mój profil</button>
-          <button class="btn-primary" onclick="App.goto('topics')">📌 Dodaj temat</button>
-          <button class="btn-primary" onclick="App.goto('tests')">🎯 Rozwiąż test</button>
-          <button class="btn-primary" onclick="App.goto('chat')">💬 Zapytaj AI</button>
+          <button class="btn-primary" onclick="App.goto('profile')">Mój profil</button>
+          <button class="btn-primary" onclick="App.goto('topics')">Dodaj temat</button>
+          <button class="btn-primary" onclick="App.goto('tests')">Rozwiąż test</button>
+          <button class="btn-primary" onclick="App.goto('chat')">Zapytaj AI</button>
         </div>
       </div>
       <div class="card">
-        <h2>🔥 Twoje postępy</h2>
+        <h2>Twoje postępy</h2>
         <div id="dashGamification"><p class="empty-msg">Ładowanie...</p></div>
       </div>
       <div class="card">
-        <h2>⚔️ 1v1 ze znajomym</h2>
+        <h2>1v1 ze znajomym</h2>
         <p class="hint">Wyzwij znajomego – kto dostanie lepszy wynik z tego samego testu?</p>
-        <button class="btn-primary" onclick="Multiplayer.openLobby()">⚔️ Zagraj 1v1</button>
+        <button class="btn-primary" onclick="Multiplayer.openLobby()">Zagraj 1v1</button>
       </div>
       <div class="card full-width">
-        <h2>🏆 Ranking graczy</h2>
+        <h2>Ranking graczy</h2>
         <div id="leaderboardContainer"><p class="empty-msg">Ładowanie...</p></div>
       </div>
     </div>
@@ -137,7 +138,7 @@
   <!-- PROFILE -->
   <section class="section" id="section-profile">
     <div class="section-header">
-      <h1>👤 Profil</h1>
+      <h1>Profil</h1>
     </div>
     <div id="profileContent"></div>
   </section>
@@ -145,8 +146,8 @@
   <!-- TOPICS -->
   <section class="section" id="section-topics">
     <div class="section-header">
-      <h1>📚 Tematy</h1>
-      <button class="btn-primary" id="btnAddTopic">➕ Nowy temat</button>
+      <h1>Tematy</h1>
+      <button class="btn-primary" id="btnAddTopic">+ Nowy temat</button>
     </div>
     <div class="search-bar">
       <input type="text" id="topicsSearch" placeholder="Szukaj tematów..." class="input-field" />
@@ -159,12 +160,12 @@
   <!-- CHAT -->
   <section class="section" id="section-chat">
     <div class="section-header">
-      <h1>🤖 Asystent AI</h1>
+      <h1>Asystent AI</h1>
       <div class="chat-controls">
         <select id="chatTopicSelect" class="input-field select-sm">
           <option value="">Wybierz temat (opcjonalnie)</option>
         </select>
-        <button class="btn-secondary" id="btnNewChat">🗑️ Nowa rozmowa</button>
+        <button class="btn-secondary" id="btnNewChat">Nowa rozmowa</button>
       </div>
     </div>
     <div id="localAIDownloadBox" style="display:none;" class="card" style="margin-bottom:0.75rem;padding:1rem;">
@@ -197,11 +198,11 @@
   <section class="section" id="section-tests">
     <div id="testsMenu">
       <div class="section-header">
-        <h1>📋 Testy</h1>
+        <h1>Testy</h1>
       </div>
       <div class="test-categories" id="testCategories"></div>
       <div class="card" style="margin-top:1rem;">
-        <h2>📊 Historia testów</h2>
+        <h2>Historia testów</h2>
         <div id="testHistory"><p class="empty-msg">Brak historii testów.</p></div>
       </div>
     </div>
@@ -230,7 +231,7 @@
 
     <div id="testsResult" style="display:none;">
       <div class="section-header">
-        <h1>🏆 Wyniki testu</h1>
+        <h1>Wyniki testu</h1>
       </div>
       <div class="result-card" id="resultCard"></div>
       <div class="result-review" id="resultReview"></div>
@@ -241,11 +242,11 @@
   <!-- SETTINGS -->
   <section class="section" id="section-settings">
     <div class="section-header">
-      <h1>⚙️ Ustawienia</h1>
+      <h1>Ustawienia</h1>
     </div>
     <div class="settings-grid">
       <div class="card">
-        <h2>🤖 Asystent AI</h2>
+        <h2>Asystent AI</h2>
 
         <div class="form-group">
           <label>Dostawca AI</label>
@@ -292,11 +293,11 @@
           </select>
         </div>
 
-        <button class="btn-primary" id="btnSaveSettings">💾 Zapisz ustawienia</button>
-        <div id="settingsSaved" class="success-msg" style="display:none;">✅ Ustawienia zapisane!</div>
+        <button class="btn-primary" id="btnSaveSettings">Zapisz ustawienia</button>
+        <div id="settingsSaved" class="success-msg" style="display:none;">Ustawienia zapisane!</div>
       </div>
       <div class="card">
-        <h2>🎯 Egzamin</h2>
+        <h2>Egzamin</h2>
         <div class="form-group">
           <label>Twój kierunek zawodowy</label>
           <input type="text" id="settingsExam" class="input-field" placeholder="np. Technik informatyk (INF.02)" />
@@ -305,16 +306,16 @@
           <label>Imię (do powitania)</label>
           <input type="text" id="settingsName" class="input-field" placeholder="np. Kacper" />
         </div>
-        <button class="btn-primary" id="btnSaveProfile">💾 Zapisz profil</button>
+        <button class="btn-primary" id="btnSaveProfile">Zapisz profil</button>
       </div>
       <div class="card">
-        <h2>🔔 Powiadomienia</h2>
+        <h2>Powiadomienia</h2>
         <p class="hint">Dostaj przypomnienia, żeby nie przerwać serii nauki.</p>
         <div id="notifStatus" class="hint" style="margin-bottom:0.75rem;"></div>
-        <button class="btn-primary" id="btnRequestNotif">🔔 Włącz powiadomienia</button>
+        <button class="btn-primary" id="btnRequestNotif">Włącz powiadomienia</button>
       </div>
       <div class="card">
-        <h2>🗑️ Dane aplikacji</h2>
+        <h2>Dane aplikacji</h2>
         <p class="hint">Usuń wszystkie zapisane dane (notatki, tematy, wyniki testów).</p>
         <button class="btn-danger" id="btnClearData">Usuń wszystkie dane</button>
       </div>
@@ -327,7 +328,7 @@
 <div class="modal-overlay" id="authModal">
   <div class="modal">
     <div class="modal-header">
-      <h2>👤 Konto Pass+</h2>
+      <h2>Konto Pass+</h2>
       <button class="modal-close" data-modal="authModal">✕</button>
     </div>
     <div class="modal-body">
@@ -376,7 +377,7 @@
 <div class="modal-overlay" id="multiModal">
   <div class="modal">
     <div class="modal-header">
-      <h2>⚔️ 1v1 ze znajomym</h2>
+      <h2>1v1 ze znajomym</h2>
       <button class="modal-close" data-modal="multiModal">✕</button>
     </div>
     <div class="modal-body" id="multiContent">
@@ -388,7 +389,7 @@
 <div class="modal-overlay" id="premiumModal">
   <div class="modal modal-large">
     <div class="modal-header">
-      <h2>⭐ Pass+ Premium</h2>
+      <h2>Pass+ Premium</h2>
       <button class="modal-close" data-modal="premiumModal">✕</button>
     </div>
     <div class="modal-body">
@@ -397,12 +398,12 @@
         <div class="premium-label">jednorazowa opłata – na zawsze</div>
       </div>
       <ul class="premium-features">
-        <li>✅ Brak reklam na zawsze</li>
-        <li>✅ Wszystkie kategorie egzaminów odblokowane</li>
-        <li>✅ Historia wyników bez limitu</li>
-        <li>✅ Wspierasz twórcę apki 🙏</li>
-        <li>🔒 1v1 ze znajomym (wkrótce)</li>
-        <li>🔒 Synchronizacja między urządzeniami (wkrótce)</li>
+        <li>Brak reklam na zawsze</li>
+        <li>Wszystkie kategorie egzaminów odblokowane</li>
+        <li>Historia wyników bez limitu</li>
+        <li>1v1 ze znajomym</li>
+        <li>Wspierasz twórcę apki</li>
+        <li class="feature-soon">Synchronizacja między urządzeniami <span class="soon-badge">wkrótce</span></li>
       </ul>
       <div class="hint" style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);border-radius:8px;padding:0.75rem;margin-top:1rem;">
         ✅ Płatność przez <strong>kartę lub Przelewy24</strong> (Stripe). Bezpieczna i jednorazowa.<br>

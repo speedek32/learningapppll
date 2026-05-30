@@ -77,7 +77,7 @@ const App = (() => {
 
   function setupTheme() {
     const btn = document.getElementById('themeToggle');
-    const saved = localStorage.getItem('egzaminpro_theme') || 'light';
+    const saved = localStorage.getItem('egzaminpro_theme') || 'dark';
     applyTheme(saved);
 
     btn.addEventListener('click', () => {
